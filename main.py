@@ -35,75 +35,75 @@ class Game:
 
     def draw_bishops(self, centerx, top, bottom):
         """Call all bishops """
-        Bishop("black_bishop.png", ((centerx - SQUARE_SIZE[0] * 6), 
-                                    (top + SQUARE_SIZE[1] * 2)), 
+        Bishop("black_bishop.png", ((centerx - SQUARE_SIZE[0] * 3), 
+                                    (top + SQUARE_SIZE[1])), 
                                     (self.group_spites, self.black_group))
-        Bishop("black_bishop.png", ((centerx + SQUARE_SIZE[0] * 6), 
-                                    (top + SQUARE_SIZE[1] * 2)), 
+        Bishop("black_bishop.png", ((centerx + SQUARE_SIZE[0] * 3), 
+                                    (top + SQUARE_SIZE[1])), 
                                     (self.group_spites, self.black_group))
 
-        Bishop("white_bishop.png", ((centerx - SQUARE_SIZE[0] * 6), 
-                                    (bottom - SQUARE_SIZE[1] * 2)), 
+        Bishop("white_bishop.png", ((centerx - SQUARE_SIZE[0] * 3), 
+                                    (bottom - SQUARE_SIZE[1])), 
                                     (self.group_spites, self.white_group))
-        Bishop("white_bishop.png", ((centerx + SQUARE_SIZE[0] * 6), 
-                                    (bottom - SQUARE_SIZE[1] * 2)), 
+        Bishop("white_bishop.png", ((centerx + SQUARE_SIZE[0] * 3), 
+                                    (bottom - SQUARE_SIZE[1])), 
                                     (self.group_spites, self.white_group))
 
     def draw_kings_queens(self, centerx, top, bottom):
-        King("black_king.png", ((centerx + SQUARE_SIZE[0] * 2), 
-                                (top + SQUARE_SIZE[1] * 2)), 
+        King("black_king.png", ((centerx + SQUARE_SIZE[0]), 
+                                (top + SQUARE_SIZE[1])), 
                                 (self.group_spites, self.black_group))
 
-        Queen("black_queen.png", ((centerx - SQUARE_SIZE[0] * 2), 
-                                (top + SQUARE_SIZE[1] * 2)), 
+        Queen("black_queen.png", ((centerx - SQUARE_SIZE[0]), 
+                                (top + SQUARE_SIZE[1])), 
                                 (self.group_spites, self.black_group))
 
-        King("white_king.png", ((centerx + SQUARE_SIZE[0] * 2), 
-                                (bottom - SQUARE_SIZE[1] * 2)), 
+        King("white_king.png", ((centerx + SQUARE_SIZE[0]), 
+                                (bottom - SQUARE_SIZE[1])), 
                                 (self.group_spites, self.white_group))
 
-        Queen("white_queen.png", ((centerx - SQUARE_SIZE[0] * 2), 
-                                (bottom - SQUARE_SIZE[1] * 2)), 
+        Queen("white_queen.png", ((centerx - SQUARE_SIZE[0]), 
+                                (bottom - SQUARE_SIZE[1])), 
                                 (self.group_spites, self.white_group))
 
     def draw_knights(self, centerx, top, bottom):
-        Knight("black_knight.png", ((centerx - SQUARE_SIZE[0] * 10), 
-                                    (top + SQUARE_SIZE[1] * 2)), 
+        Knight("black_knight.png", ((centerx - SQUARE_SIZE[0] * 5), 
+                                    (top + SQUARE_SIZE[1])), 
                                     (self.group_spites, self.black_group))
-        Knight("black_knight.png", ((centerx + SQUARE_SIZE[0] * 10), 
-                                    (top + SQUARE_SIZE[1] * 2)), 
+        Knight("black_knight.png", ((centerx + SQUARE_SIZE[0] * 5), 
+                                    (top + SQUARE_SIZE[1])), 
                                     (self.group_spites, self.black_group))
 
-        Knight("white_knight.png", ((centerx - SQUARE_SIZE[0] * 10), 
-                                    (bottom - SQUARE_SIZE[1] * 2)), 
+        Knight("white_knight.png", ((centerx - SQUARE_SIZE[0] * 5), 
+                                    (bottom - SQUARE_SIZE[1])), 
                                     (self.group_spites, self.white_group))
-        Knight("white_knight.png", ((centerx + SQUARE_SIZE[0] * 10), 
-                                    (bottom - SQUARE_SIZE[1] * 2)), 
+        Knight("white_knight.png", ((centerx + SQUARE_SIZE[0] * 5), 
+                                    (bottom - SQUARE_SIZE[1])), 
                                     (self.group_spites, self.white_group))
 
     def draw_rooks(self, centerx, top, bottom):
-        Rook("black_rook.png", ((centerx - SQUARE_SIZE[0] * 14), 
-                                    (top + SQUARE_SIZE[1] * 2)), 
+        Rook("black_rook.png", ((centerx - SQUARE_SIZE[0] * 7), 
+                                    (top + SQUARE_SIZE[1])), 
                                     (self.group_spites, self.black_group))
-        Rook("black_rook.png", ((centerx + SQUARE_SIZE[0] * 14), 
-                                    (top + SQUARE_SIZE[1] * 2)), 
+        Rook("black_rook.png", ((centerx + SQUARE_SIZE[0] * 7), 
+                                    (top + SQUARE_SIZE[1])), 
                                     (self.group_spites, self.black_group))
 
-        Rook("white_rook.png", ((centerx - SQUARE_SIZE[0] * 14), 
-                                    (bottom - SQUARE_SIZE[1] * 2)), 
+        Rook("white_rook.png", ((centerx - SQUARE_SIZE[0] * 7), 
+                                    (bottom - SQUARE_SIZE[1])), 
                                     (self.group_spites, self.white_group))
-        Rook("white_rook.png", ((centerx + SQUARE_SIZE[0] * 14), 
-                                    (bottom - SQUARE_SIZE[1] * 2)), 
+        Rook("white_rook.png", ((centerx + SQUARE_SIZE[0] * 7), 
+                                    (bottom - SQUARE_SIZE[1])), 
                                     (self.group_spites, self.white_group))
 
-    def draw_pawns(self, centerx, top, bottom, left):
+    def draw_pawns(self, top, bottom, left):
         for i in range(1, 9):
-            Pawn("black_pawn.png", (((left + SQUARE_SIZE[0] * 4 * i) - SQUARE_SIZE[0] * 2 ), 
-                                    (top + SQUARE_SIZE[1] * 6)), 
+            Pawn("black_pawn.png", (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
+                                    (top + SQUARE_SIZE[1] * 3)), 
                                     (self.group_spites, self.black_group))
         for i in range(1, 9):
-            Pawn("white_pawn.png", (((left + SQUARE_SIZE[0] * 4 * i) - SQUARE_SIZE[0] * 2 ), 
-                                    (bottom - SQUARE_SIZE[1] * 6)), 
+            Pawn("white_pawn.png", (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
+                                    (bottom - SQUARE_SIZE[1] * 3)), 
                                     (self.group_spites, self.white_group))
 
 
@@ -115,7 +115,7 @@ class Game:
         self.draw_kings_queens(centerx, top, bottom)
         self.draw_knights(centerx, top, bottom)
         self.draw_rooks(centerx, top, bottom)
-        self.draw_pawns(centerx, top, bottom, left)
+        self.draw_pawns(top, bottom, left)
  
 
     def show_screen(self):

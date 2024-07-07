@@ -4,4 +4,4 @@ from os import walk
 import sys
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 700
-SQUARE_SIZE = (20, 20)
+SQUARE_SIZE = (40, 40)
