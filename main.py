@@ -14,7 +14,7 @@ class Game:
         self.rect_dashboard = self.image_dashboard.get_frect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
         
         # All group
-        self.group_spites = pygame.sprite.Group()
+        self.group_sprites = pygame.sprite.Group()
 
         # Black  and white groups
         self.black_group = pygame.sprite.Group()
@@ -30,81 +30,84 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         sys.exit()
+                for piece in self.group_sprites:
+                    piece.mouse_position(event, self.image_dashboard)
+
             self.show_screen()
             self.draw_pieces()
 
     def draw_bishops(self, centerx, top, bottom):
         """Call all bishops """
-        Bishop("black_bishop.png", ((centerx - SQUARE_SIZE[0] * 3), 
+        Bishop("black_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3), 
                                     (top + SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.black_group))
-        Bishop("black_bishop.png", ((centerx + SQUARE_SIZE[0] * 3), 
+                                    (self.group_sprites, self.black_group))
+        Bishop("black_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3), 
                                     (top + SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.black_group))
+                                    (self.group_sprites, self.black_group))
 
-        Bishop("white_bishop.png", ((centerx - SQUARE_SIZE[0] * 3), 
+        Bishop("white_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3), 
                                     (bottom - SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.white_group))
-        Bishop("white_bishop.png", ((centerx + SQUARE_SIZE[0] * 3), 
+                                    (self.group_sprites, self.white_group))
+        Bishop("white_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3), 
                                     (bottom - SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.white_group))
+                                    (self.group_sprites, self.white_group))
 
     def draw_kings_queens(self, centerx, top, bottom):
-        King("black_king.png", ((centerx + SQUARE_SIZE[0]), 
+        King("black_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0]), 
                                 (top + SQUARE_SIZE[1])), 
-                                (self.group_spites, self.black_group))
+                                (self.group_sprites, self.black_group))
 
-        Queen("black_queen.png", ((centerx - SQUARE_SIZE[0]), 
+        Queen("black_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0]), 
                                 (top + SQUARE_SIZE[1])), 
-                                (self.group_spites, self.black_group))
+                                (self.group_sprites, self.black_group))
 
-        King("white_king.png", ((centerx + SQUARE_SIZE[0]), 
+        King("white_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0]), 
                                 (bottom - SQUARE_SIZE[1])), 
-                                (self.group_spites, self.white_group))
+                                (self.group_sprites, self.white_group))
 
-        Queen("white_queen.png", ((centerx - SQUARE_SIZE[0]), 
+        Queen("white_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0]), 
                                 (bottom - SQUARE_SIZE[1])), 
-                                (self.group_spites, self.white_group))
+                                (self.group_sprites, self.white_group))
 
     def draw_knights(self, centerx, top, bottom):
-        Knight("black_knight.png", ((centerx - SQUARE_SIZE[0] * 5), 
+        Knight("black_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 5), 
                                     (top + SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.black_group))
-        Knight("black_knight.png", ((centerx + SQUARE_SIZE[0] * 5), 
+                                    (self.group_sprites, self.black_group))
+        Knight("black_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 5), 
                                     (top + SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.black_group))
+                                    (self.group_sprites, self.black_group))
 
-        Knight("white_knight.png", ((centerx - SQUARE_SIZE[0] * 5), 
+        Knight("white_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 5), 
                                     (bottom - SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.white_group))
-        Knight("white_knight.png", ((centerx + SQUARE_SIZE[0] * 5), 
+                                    (self.group_sprites, self.white_group))
+        Knight("white_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 5), 
                                     (bottom - SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.white_group))
+                                    (self.group_sprites, self.white_group))
 
     def draw_rooks(self, centerx, top, bottom):
-        Rook("black_rook.png", ((centerx - SQUARE_SIZE[0] * 7), 
+        Rook("black_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 7), 
                                     (top + SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.black_group))
-        Rook("black_rook.png", ((centerx + SQUARE_SIZE[0] * 7), 
+                                    (self.group_sprites, self.black_group))
+        Rook("black_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 7), 
                                     (top + SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.black_group))
+                                    (self.group_sprites, self.black_group))
 
-        Rook("white_rook.png", ((centerx - SQUARE_SIZE[0] * 7), 
+        Rook("white_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 7), 
                                     (bottom - SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.white_group))
-        Rook("white_rook.png", ((centerx + SQUARE_SIZE[0] * 7), 
+                                    (self.group_sprites, self.white_group))
+        Rook("white_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 7), 
                                     (bottom - SQUARE_SIZE[1])), 
-                                    (self.group_spites, self.white_group))
+                                    (self.group_sprites, self.white_group))
 
     def draw_pawns(self, top, bottom, left):
         for i in range(1, 9):
-            Pawn("black_pawn.png", (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
+            Pawn("black_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
                                     (top + SQUARE_SIZE[1] * 3)), 
-                                    (self.group_spites, self.black_group))
+                                    (self.group_sprites, self.black_group))
         for i in range(1, 9):
-            Pawn("white_pawn.png", (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
+            Pawn("white_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
                                     (bottom - SQUARE_SIZE[1] * 3)), 
-                                    (self.group_spites, self.white_group))
+                                    (self.group_sprites, self.white_group))
 
 
     def draw_pieces(self):
@@ -126,8 +129,8 @@ class Game:
         self.screen.blit(self.image_dashboard, self.rect_dashboard)
 
         # Draw all sprites
-        self.group_spites.draw(self.screen)
-        self.group_spites.update(dt)
+        self.group_sprites.draw(self.screen)
+        self.group_sprites.update(dt)
 
         pygame.display.flip()
 
