@@ -1,5 +1,5 @@
-from typing import Any
 from settings import *
+from circle import Circle
 
 class Piece(pygame.sprite.Sprite):
     """Implements piece class"""
@@ -20,7 +20,6 @@ class Piece(pygame.sprite.Sprite):
         # For inceasing the size
         self.original_size = self.rect.size 
         
-        self.selected = False
         
 
     def mouse_position(self, event, image_dashboard):
@@ -29,19 +28,16 @@ class Piece(pygame.sprite.Sprite):
             self.selected = False
             if self.rect.collidepoint(mouse_pos):
                 print(self.rect)
-                self.selected = True
-                if self.selected:
-                    self.draw_path(image_dashboard, self.rect_dashboard_right, 
+                self.draw_path(image_dashboard, self.rect_dashboard_right, 
                                self.rect_dashboard_left, self.rect_dashboard_top, self.rect_dashboard_bottom)
-                else:
-                    self.delete_path()
-    
-                
+            else:
+                self.delete_path()
+        
                 
         
     def draw_path(self, image_dashboard, right, left, top, bottom):
         """Draws path for the piece"""
-        pygame.draw.circle(image_dashboard, PATH_COLOR, (100, 100), 10)      
+        pass    
 
 
     def delete_path(self):
@@ -85,9 +81,12 @@ class Pawn(Piece):
 
         # For coordinates of the path
         self.pos_circles = []
-
+        
+        self.circle = Circle()
+        
 
     def draw_path(self, image_dashboard, right, left, top, bottom):
+        self.image_dashboard = image_dashboard
         # Find the distance from center y to top of the screen, opponent later
         distance = abs(int((top - self.rect.center[1]) // (SQUARE_SIZE[1] * 2)))
         print(distance)
@@ -100,11 +99,15 @@ class Pawn(Piece):
             else:
                 for i in range(1, min(2, distance)):
                     self.pos_circles.append((self.rect.centerx - SQUARE_SIZE[0] * 7, self.rect.y - SQUARE_SIZE[1] * 2 * i))
-        # draw the path
+        
         if self.pos_circles:
             for pos in self.pos_circles:     
-                pygame.draw.circle(image_dashboard, PATH_COLOR, pos, 10)   
+                self.circle.draw_circle(self.image_dashboard, pos)
+                
 
     def delete_path(self):
         self.pos_circles = []
+        self.circle.delete_circle()
+        
+    
         
