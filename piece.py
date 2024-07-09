@@ -1,3 +1,4 @@
+from typing import Any
 from settings import *
 from circle import Circle
 
@@ -19,26 +20,33 @@ class Piece(pygame.sprite.Sprite):
 
         # For inceasing the size
         self.original_size = self.rect.size 
+        self.selected = False
         
         
 
     def mouse_position(self, event, image_dashboard):
+        
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = event.pos
-            self.selected = False
-            if self.rect.collidepoint(mouse_pos):
+            if not self.selected and self.rect.collidepoint(mouse_pos):
+                self.selected = True
                 print(self.rect)
                 self.draw_path(image_dashboard, self.rect_dashboard_right, 
                                self.rect_dashboard_left, self.rect_dashboard_top, self.rect_dashboard_bottom)
-            else:
-                self.delete_path()
+
+
+    def move(self, dt):
+        if self.selected: 
+            distance = abs(int((self.rect_dashboard_top - self.rect.center[1]) // (SQUARE_SIZE[1] * 2)))
+            print(distance)
         
+    def update(self, dt) -> None:
+        self.delete_path()   
                 
         
     def draw_path(self, image_dashboard, right, left, top, bottom):
         """Draws path for the piece"""
-        pass    
-
+        pass
 
     def delete_path(self):
         """Erase the path(blue circles)"""
@@ -79,10 +87,11 @@ class Pawn(Piece):
         self.rect_dashboard = rect_dashboard
         self.first_move = True
 
+        self.pawn_color = image_name.split("_")[0]
+        
         # For coordinates of the path
         self.pos_circles = []
         
-        self.circle = Circle()
         
 
     def draw_path(self, image_dashboard, right, left, top, bottom):
@@ -95,19 +104,22 @@ class Pawn(Piece):
             # Check first move 
             if self.first_move:
                 for i in range(1, min(3, distance)):
-                    self.pos_circles.append((self.rect.centerx - SQUARE_SIZE[0] * 7, self.rect.y - SQUARE_SIZE[1] * 2 * i))
+                    if self.pawn_color == "white":
+                        # Check if white color or black
+                        self.pos_circles.append(Circle((self.rect.centerx - SQUARE_SIZE[0] * 3.5, self.rect.y - SQUARE_SIZE[1] * i), image_dashboard))
+                    elif self.pawn_color == "black":
+                        self.pos_circles.append(Circle((self.rect.centerx - SQUARE_SIZE[0] * 3.5, self.rect.y + SQUARE_SIZE[1] * i), image_dashboard))
             else:
                 for i in range(1, min(2, distance)):
-                    self.pos_circles.append((self.rect.centerx - SQUARE_SIZE[0] * 7, self.rect.y - SQUARE_SIZE[1] * 2 * i))
-        
-        if self.pos_circles:
-            for pos in self.pos_circles:     
-                self.circle.draw_circle(self.image_dashboard, pos)
+                    if self.pawn_color == "white":
+                        self.pos_circles.append(Circle((self.rect.centerx - SQUARE_SIZE[0] * 3.5, self.rect.y - SQUARE_SIZE[1] * i), image_dashboard))
+                    else:
+                        self.pos_circles.append(Circle((self.rect.centerx - SQUARE_SIZE[0] * 3.5, self.rect.y + SQUARE_SIZE[1] * i), image_dashboard))
                 
 
     def delete_path(self):
-        self.pos_circles = []
-        self.circle.delete_circle()
+        for circle in self.pos_circles:
+            circle.delete_circle()
         
     
         

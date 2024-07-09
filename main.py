@@ -9,6 +9,9 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Chess")
 
+        self.board = [[None for _ in range(8)] for _ in range(8)] 
+
+      
         # Dashboard
         self.image_dashboard = pygame.image.load(join("img", "board.png")).convert_alpha()
         self.rect_dashboard = self.image_dashboard.get_frect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
@@ -30,83 +33,86 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         sys.exit()
-                for piece in self.group_sprites:
-                    piece.mouse_position(event, self.image_dashboard)
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    for piece in self.group_sprites:
+                        if piece.rect.collidepoint(event.pos):
+                            print(piece.rect)
 
             self.show_screen()
             self.draw_pieces()
+            #print(self.board)
 
     def draw_bishops(self, centerx, top, bottom):
         """Call all bishops """
-        Bishop("black_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3), 
-                                    (top + SQUARE_SIZE[1])), 
+        self.board[0][2] = Bishop("black_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 1.5 ), 
+                                    (top + SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.black_group))
-        Bishop("black_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3), 
-                                    (top + SQUARE_SIZE[1])), 
+        self.board[0][5] = Bishop("black_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 1.5), 
+                                    (top + SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.black_group))
 
-        Bishop("white_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3), 
-                                    (bottom - SQUARE_SIZE[1])), 
+        Bishop("white_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 1.5), 
+                                    (bottom - SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.white_group))
-        Bishop("white_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3), 
-                                    (bottom - SQUARE_SIZE[1])), 
+        Bishop("white_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 1.5), 
+                                    (bottom - SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.white_group))
 
     def draw_kings_queens(self, centerx, top, bottom):
-        King("black_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0]), 
-                                (top + SQUARE_SIZE[1])), 
+        King("black_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] / 2), 
+                                (top + SQUARE_SIZE[1] / 2)), 
                                 (self.group_sprites, self.black_group))
 
-        Queen("black_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0]), 
-                                (top + SQUARE_SIZE[1])), 
+        Queen("black_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] / 2), 
+                                (top + SQUARE_SIZE[1] / 2)), 
                                 (self.group_sprites, self.black_group))
 
-        King("white_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0]), 
-                                (bottom - SQUARE_SIZE[1])), 
+        King("white_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] / 2), 
+                                (bottom - SQUARE_SIZE[1] / 2)), 
                                 (self.group_sprites, self.white_group))
 
-        Queen("white_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0]), 
-                                (bottom - SQUARE_SIZE[1])), 
+        Queen("white_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] / 2), 
+                                (bottom - SQUARE_SIZE[1] / 2 )), 
                                 (self.group_sprites, self.white_group))
 
     def draw_knights(self, centerx, top, bottom):
-        Knight("black_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 5), 
-                                    (top + SQUARE_SIZE[1])), 
+        Knight("black_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 2.5), 
+                                    (top + SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.black_group))
-        Knight("black_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 5), 
-                                    (top + SQUARE_SIZE[1])), 
+        Knight("black_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 2.5), 
+                                    (top + SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.black_group))
 
-        Knight("white_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 5), 
-                                    (bottom - SQUARE_SIZE[1])), 
+        Knight("white_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 2.5), 
+                                    (bottom - SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.white_group))
-        Knight("white_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 5), 
-                                    (bottom - SQUARE_SIZE[1])), 
+        Knight("white_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 2.5), 
+                                    (bottom - SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.white_group))
 
     def draw_rooks(self, centerx, top, bottom):
-        Rook("black_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 7), 
-                                    (top + SQUARE_SIZE[1])), 
+        Rook("black_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3.5), 
+                                    (top + SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.black_group))
-        Rook("black_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 7), 
-                                    (top + SQUARE_SIZE[1])), 
+        Rook("black_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3.5), 
+                                    (top + SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.black_group))
 
-        Rook("white_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 7), 
-                                    (bottom - SQUARE_SIZE[1])), 
+        Rook("white_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3.5), 
+                                    (bottom - SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.white_group))
-        Rook("white_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 7), 
-                                    (bottom - SQUARE_SIZE[1])), 
+        Rook("white_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3.5), 
+                                    (bottom - SQUARE_SIZE[1] / 2)), 
                                     (self.group_sprites, self.white_group))
 
     def draw_pawns(self, top, bottom, left):
-        for i in range(1, 9):
-            Pawn("black_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
-                                    (top + SQUARE_SIZE[1] * 3)), 
+        for i in range(8):
+            Pawn("black_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0] * (i + 1)) - SQUARE_SIZE[0] / 2), 
+                                    (top + SQUARE_SIZE[1] * 1.5)), 
                                     (self.group_sprites, self.black_group))
-        for i in range(1, 9):
-            Pawn("white_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0] * 2 * i) - SQUARE_SIZE[0]), 
-                                    (bottom - SQUARE_SIZE[1] * 3)), 
+        for i in range(8):
+            Pawn("white_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0]  * (i + 1)) - SQUARE_SIZE[0] / 2), 
+                                    (bottom - SQUARE_SIZE[1] * 1.5)), 
                                     (self.group_sprites, self.white_group))
 
 

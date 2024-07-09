@@ -4,6 +4,6 @@ from os import walk
 import sys
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 700
-SQUARE_SIZE = (40, 40)
+SQUARE_SIZE = (80, 80)
 
 PATH_COLOR = "blue"
