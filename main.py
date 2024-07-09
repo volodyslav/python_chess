@@ -13,11 +13,13 @@ class Game:
 
         self.board = [[None for _ in range(8)] for _ in range(8)] 
 
+        self.black_images = [["rook.png", "knight.png", "bishop.png", "queen.png", "king.png", "bishop.png", "knight.png", "rook.png"], ["pawn.png" for _ in range(8)]]
+        self.white_images = [["pawn.png" for _ in range(8)], ["rook.png", "knight.png", "bishop.png", "queen.png", "king.png", "bishop.png", "knight.png", "rook.png"]]
 
         # Dashboard
         self.image_dashboard = pygame.image.load(join("img", "board.png")).convert_alpha()
         self.rect_dashboard = self.image_dashboard.get_frect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-        
+        self.dash_left = self.rect_dashboard.left
         # All group
         self.group_sprites = pygame.sprite.Group()
 
@@ -38,105 +40,40 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    mouse_pos = event.pos
+                    print(mouse_pos)
                     for piece in self.group_sprites:
-                        piece.delete_path()
-                        if not self.selected_piece and piece.rect.collidepoint(event.pos):
+                        if not self.selected_piece and piece.rect.collidepoint(mouse_pos):
                             self.selected_piece = True
-                            piece.draw_path(self.image_dashboard)
-                            print(piece.rect)
+                            print(f"{piece.piece_name} - {piece.color}")
+                            print()
                         
+                            if mouse_pos[1] - piece.rect.topleft[1] > 40:
+                                piece.move()
+                                print("Move")
+                                 
                     self.selected_piece = False
                     
-                        
-
             self.show_screen()
-            self.draw_pieces()
-            #print(self.board)
-
-    def draw_bishops(self, centerx, top, bottom):
-        """Call all bishops """
-        self.board[0][2] = Bishop("black_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 1.5 ), 
-                                    (top + SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.black_group))
-        self.board[0][5] = Bishop("black_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 1.5), 
-                                    (top + SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.black_group))
-
-        Bishop("white_bishop.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 1.5), 
-                                    (bottom - SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.white_group))
-        Bishop("white_bishop.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 1.5), 
-                                    (bottom - SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.white_group))
-
-    def draw_kings_queens(self, centerx, top, bottom):
-        King("black_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] / 2), 
-                                (top + SQUARE_SIZE[1] / 2)), 
-                                (self.group_sprites, self.black_group))
-
-        Queen("black_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] / 2), 
-                                (top + SQUARE_SIZE[1] / 2)), 
-                                (self.group_sprites, self.black_group))
-
-        King("white_king.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] / 2), 
-                                (bottom - SQUARE_SIZE[1] / 2)), 
-                                (self.group_sprites, self.white_group))
-
-        Queen("white_queen.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] / 2), 
-                                (bottom - SQUARE_SIZE[1] / 2 )), 
-                                (self.group_sprites, self.white_group))
-
-    def draw_knights(self, centerx, top, bottom):
-        Knight("black_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 2.5), 
-                                    (top + SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.black_group))
-        Knight("black_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 2.5), 
-                                    (top + SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.black_group))
-
-        Knight("white_knight.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 2.5), 
-                                    (bottom - SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.white_group))
-        Knight("white_knight.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 2.5), 
-                                    (bottom - SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.white_group))
-
-    def draw_rooks(self, centerx, top, bottom):
-        Rook("black_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3.5), 
-                                    (top + SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.black_group))
-        Rook("black_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3.5), 
-                                    (top + SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.black_group))
-
-        Rook("white_rook.png", self.rect_dashboard, ((centerx - SQUARE_SIZE[0] * 3.5), 
-                                    (bottom - SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.white_group))
-        Rook("white_rook.png", self.rect_dashboard, ((centerx + SQUARE_SIZE[0] * 3.5), 
-                                    (bottom - SQUARE_SIZE[1] / 2)), 
-                                    (self.group_sprites, self.white_group))
-
-    def draw_pawns(self, top, bottom, left):
-        for i in range(8):
-            Pawn("black_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0] * (i + 1)) - SQUARE_SIZE[0] / 2), 
-                                    (top + SQUARE_SIZE[1] * 1.5)), 
-                                    (self.group_sprites, self.black_group))
-        for i in range(8):
-            Pawn("white_pawn.png", self.rect_dashboard, (((left + SQUARE_SIZE[0]  * (i + 1)) - SQUARE_SIZE[0] / 2), 
-                                    (bottom - SQUARE_SIZE[1] * 1.5)), 
-                                    (self.group_sprites, self.white_group))
+            self.draw_board_pieces()
 
 
-    def draw_pieces(self):
-        """Draw all pieces"""
-        centerx, top, bottom, left = self.rect_dashboard.center[0], self.rect_dashboard.top, self.rect_dashboard.bottom, self.rect_dashboard.left
+    def draw_board_pieces(self):
+        """Draw the pieces on the screen"""
+        for j in range(2):
+            for i in range(8):
+                self.board[j][i] = Piece(join("img", "black", self.black_images[j][i]), 
+                                         (self.dash_left + SQUARE_SIZE[0] * (i + 0.5), SQUARE_SIZE[1] * (j + 1)), 
+                                          "black", self.black_images[j][i], 
+                                         (self.group_sprites, self.black_group))
 
-        self.draw_bishops(centerx, top, bottom)
-        self.draw_kings_queens(centerx, top, bottom)
-        self.draw_knights(centerx, top, bottom)
-        self.draw_rooks(centerx, top, bottom)
-        self.draw_pawns(top, bottom, left)
- 
+        for j in range(2):
+            for i in range(8):
+                self.board[j][i] = Piece(join("img", "white", self.white_images[j][i]), 
+                                         (self.dash_left + SQUARE_SIZE[0] * (i + 0.5), SQUARE_SIZE[1] * (j + 7)), 
+                                         "white", self.white_images[j][i], 
+                                         (self.group_sprites, self.white_group))
+
 
     def show_screen(self):
         dt = self.clock.tick() / 1000
