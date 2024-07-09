@@ -1,3 +1,4 @@
+from typing import Any
 from settings import *
 
 class Circle(pygame.sprite.Sprite):

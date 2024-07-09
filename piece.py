@@ -20,25 +20,15 @@ class Piece(pygame.sprite.Sprite):
 
         # For inceasing the size
         self.original_size = self.rect.size 
-        self.selected = False
-        
-        
 
-    def mouse_position(self, event, image_dashboard):
-        
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            mouse_pos = event.pos
-            if not self.selected and self.rect.collidepoint(mouse_pos):
-                self.selected = True
-                print(self.rect)
-                self.draw_path(image_dashboard, self.rect_dashboard_right, 
-                               self.rect_dashboard_left, self.rect_dashboard_top, self.rect_dashboard_bottom)
-
+    def piece_color(self):
+        """Return the color of the piece"""
+        return self.image_name.split("_")[0]
 
     def move(self, dt):
         if self.selected: 
-            distance = abs(int((self.rect_dashboard_top - self.rect.center[1]) // (SQUARE_SIZE[1] * 2)))
-            print(distance)
+            self.distance_2top = abs(int((self.rect_dashboard_top - self.rect.center[1]) // (SQUARE_SIZE[1] * 2)))
+            print(self.distance_2top)
         
     def update(self, dt) -> None:
         self.delete_path()   
@@ -86,21 +76,26 @@ class Pawn(Piece):
         super().__init__(image_name, rect_dashboard, pos, *groups)
         self.rect_dashboard = rect_dashboard
         self.first_move = True
-
-        self.pawn_color = image_name.split("_")[0]
+        self.image_name = image_name
+        self.pawn_color = self.piece_color()
         
         # For coordinates of the path
         self.pos_circles = []
-        
-        
 
-    def draw_path(self, image_dashboard, right, left, top, bottom):
+        # Distance 
+        self.distance_2top = abs(int((self.rect_dashboard_top - self.rect.center[1]) // (SQUARE_SIZE[1] * 2)))
+        self.distance_2bottom = abs(int((self.rect.center[1] - self.rect_dashboard_bottom) // (SQUARE_SIZE[1] * 2)))
+
+    def draw_path(self, image_dashboard):
         self.image_dashboard = image_dashboard
         # Find the distance from center y to top of the screen, opponent later
-        distance = abs(int((top - self.rect.center[1]) // (SQUARE_SIZE[1] * 2)))
-        print(distance)
-        # Draw circles if they are less than top dashboard rect
-        if self.rect.center[1] > top:
+        
+        print(self.distance_2top)
+        print(self.distance_2bottom)
+        # Draw circles if they are less than self.rect_dashboard_top dashboard rect
+        distance = self.distance_2top if self.pawn_color == "white" else self.distance_2bottom
+
+        if self.rect.center[1] > self.rect_dashboard_top:
             # Check first move 
             if self.first_move:
                 for i in range(1, min(3, distance)):
@@ -117,9 +112,8 @@ class Pawn(Piece):
                         self.pos_circles.append(Circle((self.rect.centerx - SQUARE_SIZE[0] * 3.5, self.rect.y + SQUARE_SIZE[1] * i), image_dashboard))
                 
 
-    def delete_path(self):
-        for circle in self.pos_circles:
-            circle.delete_circle()
+    def update(self, dt):
+        self.pos_circles.clear()
         
     
         

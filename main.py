@@ -1,5 +1,7 @@
 from settings import *
 from piece import *
+from circle import *
+
 
 
 class Game:
@@ -11,7 +13,7 @@ class Game:
 
         self.board = [[None for _ in range(8)] for _ in range(8)] 
 
-      
+
         # Dashboard
         self.image_dashboard = pygame.image.load(join("img", "board.png")).convert_alpha()
         self.rect_dashboard = self.image_dashboard.get_frect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
@@ -24,6 +26,8 @@ class Game:
         self.white_group = pygame.sprite.Group()
 
         self.clock = pygame.time.Clock()
+        
+        self.selected_piece = False
 
     def run_game(self):
         while True:
@@ -35,8 +39,15 @@ class Game:
                         sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for piece in self.group_sprites:
-                        if piece.rect.collidepoint(event.pos):
+                        piece.delete_path()
+                        if not self.selected_piece and piece.rect.collidepoint(event.pos):
+                            self.selected_piece = True
+                            piece.draw_path(self.image_dashboard)
                             print(piece.rect)
+                        
+                    self.selected_piece = False
+                    
+                        
 
             self.show_screen()
             self.draw_pieces()
@@ -131,6 +142,7 @@ class Game:
         dt = self.clock.tick() / 1000
         self.screen.fill("gray")
 
+        
         # Draw the dashboard
         self.screen.blit(self.image_dashboard, self.rect_dashboard)
 
