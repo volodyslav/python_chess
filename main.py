@@ -42,15 +42,21 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = event.pos
                     print(mouse_pos)
+                    square_position_y =  mouse_pos[1] // SQUARE_SIZE[1] # Shows the rows
+                    square_position_x = mouse_pos[0] // SQUARE_SIZE[0] # Shows the rows
+                    print(square_position_y, square_position_x)
                     for piece in self.group_sprites:
                         if not self.selected_piece and piece.rect.collidepoint(mouse_pos):
                             self.selected_piece = True
                             print(f"{piece.piece_name} - {piece.color}")
-                            print()
-                        
-                            if mouse_pos[1] - piece.rect.topleft[1] > 40:
-                                piece.move()
-                                print("Move")
+                            rect_pos_y = int(piece.rect.y // SQUARE_SIZE[1])
+                            rect_pos_x = int(piece.rect.x // SQUARE_SIZE[1])
+                            print(rect_pos_y, rect_pos_x)
+                            if rect_pos_y != square_position_y: # Check if doesn't choose the same piece
+                                self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x] 
+                                self.board[rect_pos_y][rect_pos_x] = None
+                            #print(self.board)
+                            
                                  
                     self.selected_piece = False
                     
@@ -69,7 +75,7 @@ class Game:
 
         for j in range(2):
             for i in range(8):
-                self.board[j][i] = Piece(join("img", "white", self.white_images[j][i]), 
+                self.board[j+6][i] = Piece(join("img", "white", self.white_images[j][i]), 
                                          (self.dash_left + SQUARE_SIZE[0] * (i + 0.5), SQUARE_SIZE[1] * (j + 7)), 
                                          "white", self.white_images[j][i], 
                                          (self.group_sprites, self.white_group))
