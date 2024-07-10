@@ -1,4 +1,4 @@
-from typing import Any
+
 from settings import *
 from circle import Circle
 
@@ -15,8 +15,8 @@ class Piece(pygame.sprite.Sprite):
 
         self.speed = 10
 
-    def move(self):
-        self.rect.y -= self.speed * 0.01
+    def move(self, pos):
+        self.rect.center = pos 
     
     
    
