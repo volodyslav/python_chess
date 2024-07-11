@@ -29,8 +29,11 @@ class Game:
 
         self.clock = pygame.time.Clock()
         
-        self.selected_piece = False
+        self.selected_piece = None
+        self.move_is_over = False
         
+        self.draw_board_pieces()
+
     def run_game(self):
         while True:
             for event in pygame.event.get():
@@ -42,39 +45,38 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = event.pos
                     print(mouse_pos)
-                    if self.selected_piece:
-                        square_position_y = mouse_pos[1] // SQUARE_SIZE # Shows the rows
-                        square_position_x = mouse_pos[0] // SQUARE_SIZE # Shows the columns
-                        print("Square pos ", square_position_y, square_position_x)
-                        
-                        rect_pos_y = int(self.selected_piece.rect.y // SQUARE_SIZE)
-                        rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE)
-                        print("Rect pos ", rect_pos_y, rect_pos_x)
-                                
-                                    # Replace
-                        self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
-                        self.board[rect_pos_y][rect_pos_x] = None
-                                    # Has ability to move
-                                
-                        self.selected_piece.move(((square_position_x + 0.5) * SQUARE_SIZE , (square_position_y + 0.5) * SQUARE_SIZE ))
-                        self.black_group.update()
-                        print("Move!")
-                                    #self.black_group.update()  
-                                    #print(self.board[:3][:])   
-                    self.selected_piece = None
-
-                    for piece in self.black_group:
-                        if piece.rect.collidepoint(mouse_pos):
-                            if not self.selected_piece:
-                                self.selected_piece = piece
-                                print(self.selected_piece.piece_name)
-                                    #print(f"{piece.piece_name} - {piece.color}")
-                                
-                                    
-                    
-            self.draw_board_pieces()
+                    self.check_movement(mouse_pos)
+                    self.select_piece(mouse_pos)
+       
             self.show_screen()
            
+    def select_piece(self, mouse_pos):
+        """Selects a piece"""
+        for piece in self.black_group:
+            if piece.rect.collidepoint(mouse_pos):
+                if not self.selected_piece:
+                    self.selected_piece = piece
+                    self.move_is_over = False
+                    #print(self.selected_piece.piece_name)    
+
+    def check_movement(self, mouse_pos):
+        """Check if the piece can move"""
+        if self.selected_piece and not self.move_is_over:
+            square_position_y = mouse_pos[1] // SQUARE_SIZE # Shows the rows
+            square_position_x = mouse_pos[0] // SQUARE_SIZE # Shows the columns
+            print("Square pos ", square_position_y, square_position_x)
+
+            rect_pos_y = int(self.selected_piece.rect.y // SQUARE_SIZE) # Rect pos y
+            rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
+            print("Rect pos ", rect_pos_y, rect_pos_x)
+                        
+            if square_position_x == rect_pos_x and square_position_y < rect_pos_y + 3:  
+                self.selected_piece.move(square_position_x, square_position_y, self.selected_piece.piece_name)
+                print("Move!")
+                print(self.selected_piece.piece_name)
+                self.selected_piece = None
+                self.move_is_over = True
+                
 
 
     def draw_board_pieces(self):

@@ -15,8 +15,11 @@ class Piece(pygame.sprite.Sprite):
 
         self.speed = 10
 
-    def move(self, pos):
-        self.rect.center = pos 
+    def move(self, square_position_x, square_position_y, piece_name):
+        if piece_name.split(".")[0] == "pawn":
+            self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
+            self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
+        
     
     
    
