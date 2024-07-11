@@ -42,28 +42,34 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = event.pos
                     print(mouse_pos)
-                    square_position_y = mouse_pos[1] // SQUARE_SIZE # Shows the rows
-                    square_position_x = mouse_pos[0] // SQUARE_SIZE # Shows the rows
-                    print("Square pos ", square_position_y, square_position_x)
+                    if self.selected_piece:
+                        square_position_y = mouse_pos[1] // SQUARE_SIZE # Shows the rows
+                        square_position_x = mouse_pos[0] // SQUARE_SIZE # Shows the columns
+                        print("Square pos ", square_position_y, square_position_x)
+                        
+                        rect_pos_y = int(self.selected_piece.rect.y // SQUARE_SIZE)
+                        rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE)
+                        print("Rect pos ", rect_pos_y, rect_pos_x)
+                                
+                                    # Replace
+                        self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
+                        self.board[rect_pos_y][rect_pos_x] = None
+                                    # Has ability to move
+                                
+                        self.selected_piece.move(((square_position_x + 0.5) * SQUARE_SIZE , (square_position_y + 0.5) * SQUARE_SIZE ))
+                        self.black_group.update()
+                        print("Move!")
+                                    #self.black_group.update()  
+                                    #print(self.board[:3][:])   
+                    self.selected_piece = None
+
                     for piece in self.black_group:
                         if piece.rect.collidepoint(mouse_pos):
                             if not self.selected_piece:
                                 self.selected_piece = piece
                                 print(self.selected_piece.piece_name)
                                     #print(f"{piece.piece_name} - {piece.color}")
-                                rect_pos_y = int(self.selected_piece.rect.y // SQUARE_SIZE)
-                                rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE)
-                                print("Rect pos ", rect_pos_y, rect_pos_x)
                                 
-                                    # Replace
-                                self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
-                                self.board[rect_pos_y][rect_pos_x] = None
-                                    # Has ability to move
-                                self.selected_piece.move(((square_position_x + 0.5) * SQUARE_SIZE , (square_position_y + 1.5) * SQUARE_SIZE ))
-                                print("Move!")
-                                    #self.black_group.update()  
-                                    #print(self.board[:3][:])   
-                                self.selected_piece = None
                                     
                     
             self.draw_board_pieces()
