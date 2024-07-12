@@ -11,7 +11,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Chess")
 
-        #self.board = [[None for _ in range(8)] for _ in range(8)] 
+        self.board = [[None for _ in range(8)] for _ in range(8)] 
 
         self.black_images = [["rook.png", "knight.png", "bishop.png", "queen.png", "king.png", "bishop.png", "knight.png", "rook.png"], ["pawn.png" for _ in range(8)]]
         self.white_images = [["pawn.png" for _ in range(8)], ["rook.png", "knight.png", "bishop.png", "queen.png", "king.png", "bishop.png", "knight.png", "rook.png"]]
@@ -29,8 +29,14 @@ class Game:
 
         self.clock = pygame.time.Clock()
         
+        # fOR MOVING
         self.selected_piece = None
         self.move_is_over = False
+
+        self.can_move = False # Check if nothing between piece and square to move 
+
+        # Circles for movement
+        self.circles = [] 
         
         self.draw_board_pieces()
 
@@ -59,6 +65,10 @@ class Game:
             if piece.rect.collidepoint(mouse_pos):
                 if not self.selected_piece and not self.move_is_over:
                     self.selected_piece = piece # select a piece which is just selected
+                     # Draw the circles
+                    self.number_move_pawn = 2 if self.selected_piece.first_move else 3
+                    for i in range(1, self.number_move_pawn):
+                        self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
                     #self.move_is_over = False 
                     print(self.selected_piece.piece_name)   
             
@@ -74,17 +84,40 @@ class Game:
             rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
             print("Rect pos ", rect_pos_y, rect_pos_x)
             
-            piece_name = self.selected_piece.piece_name.split(".")[0] # Just a name like pawn etc
+            self.piece_name = self.selected_piece.piece_name.split(".")[0] # Just a name like pawn etc
 
-            if piece_name == "pawn":  # Check only a black pawn
+            self.can_move = False
+
+            # for j, row in enumerate(self.board):
+            #     for i in row:
+            #         for k in range(rect_pos_y, square_position_y):
+            #             if self.board[j][k] != None:
+            #                 self.can_move = False
+            # self.can_move = True
+
+
+            # Change postions in board list
+            self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
+            self.board[rect_pos_y][rect_pos_x] = None
+
+            if self.piece_name == "pawn":  # Check only a black pawn
                 self.selected_piece.move_black_pawn(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
                 print("Move!")
                 self.selected_piece.first_move = True # Checks first move
                 print(self.selected_piece.piece_name)
                 self.selected_piece = None # None selected
                 self.move_is_over = True # Cant move anymore the selected piece
-                
-            
+            elif self.piece_name == "rook":  # Check only a black rook
+                self.selected_piece.move_black_rook(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
+                print("Move!")
+                self.selected_piece.first_move = True # Checks first move
+                print(self.selected_piece.piece_name)
+                self.selected_piece = None # None selected
+                self.move_is_over = True # Cant move anymore the selected piece
+            print(self.board)
+            # Delete all circles
+            for circle in self.circles:
+                circle.kill()
                 
 
 
@@ -92,17 +125,18 @@ class Game:
         """Draw the pieces on the screen"""
         for j in range(2):
             for i in range(8):
-                Piece(join("img", "black", self.black_images[j][i]), 
+                self.board[j][i] = Piece(join("img", "black", self.black_images[j][i]), 
                                          (self.dash_left + SQUARE_SIZE * (i + 0.5), self.dash_top + SQUARE_SIZE * (j + 0.5)), 
                                           "black", self.black_images[j][i], 
                                          (self.group_sprites, self.black_group))
 
         for j in range(2):
             for i in range(8):
-                Piece(join("img", "white", self.white_images[j][i]), 
+                self.board[j+6][i] = Piece(join("img", "white", self.white_images[j][i]), 
                                          (self.dash_left + SQUARE_SIZE * (i + 0.5), self.dash_top + SQUARE_SIZE * (j + 6.5)), 
                                          "white", self.white_images[j][i], 
                                          (self.group_sprites, self.white_group))
+        
 
 
     def show_screen(self):

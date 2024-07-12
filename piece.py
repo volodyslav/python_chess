@@ -20,11 +20,18 @@ class Piece(pygame.sprite.Sprite):
     def move_black_pawn(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
         """Move the black pawns"""
         move_squares = 2 if self.first_move else 3 # Checks first move
-        if square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares: # Check x == x cant move if x + 1 and 3 = 2 squares to move
+        if square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares and not rect_pos_y > square_position_y: # Check x == x cant move if x + 1 ;and 3 = 2 squares to move; cant move back
             self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
             self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
         
-
+    def move_black_rook(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+        """Move the black rooks"""
+        if square_position_x == rect_pos_x: # Check movement horizontally 
+            self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
+            self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
+        elif square_position_y == rect_pos_y: # Check movement vertically
+            self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
+            self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
 
 
     
