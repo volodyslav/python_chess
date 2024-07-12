@@ -14,12 +14,19 @@ class Piece(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center=pos)
 
         self.speed = 10
+        # First move for pawns
+        self.first_move = False
 
-    def move(self, square_position_x, square_position_y, piece_name):
-        if piece_name.split(".")[0] == "pawn":
+    def move_black_pawn(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+        """Move the black pawns"""
+        move_squares = 2 if self.first_move else 3 # Checks first move
+        if square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares: # Check x == x cant move if x + 1 and 3 = 2 squares to move
             self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
             self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
         
+
+
+
     
     
    

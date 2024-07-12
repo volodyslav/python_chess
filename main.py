@@ -11,7 +11,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Chess")
 
-        self.board = [[None for _ in range(8)] for _ in range(8)] 
+        #self.board = [[None for _ in range(8)] for _ in range(8)] 
 
         self.black_images = [["rook.png", "knight.png", "bishop.png", "queen.png", "king.png", "bishop.png", "knight.png", "rook.png"], ["pawn.png" for _ in range(8)]]
         self.white_images = [["pawn.png" for _ in range(8)], ["rook.png", "knight.png", "bishop.png", "queen.png", "king.png", "bishop.png", "knight.png", "rook.png"]]
@@ -43,6 +43,7 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    self.move_is_over = False # Check if movement is over, lets to go next piece
                     mouse_pos = event.pos
                     print(mouse_pos)
                     self.check_movement(mouse_pos)
@@ -52,12 +53,15 @@ class Game:
            
     def select_piece(self, mouse_pos):
         """Selects a piece"""
+        self.selected_piece = None
+        
         for piece in self.black_group:
             if piece.rect.collidepoint(mouse_pos):
-                if not self.selected_piece:
-                    self.selected_piece = piece
-                    self.move_is_over = False
-                    #print(self.selected_piece.piece_name)    
+                if not self.selected_piece and not self.move_is_over:
+                    self.selected_piece = piece # select a piece which is just selected
+                    #self.move_is_over = False 
+                    print(self.selected_piece.piece_name)   
+            
 
     def check_movement(self, mouse_pos):
         """Check if the piece can move"""
@@ -69,13 +73,18 @@ class Game:
             rect_pos_y = int(self.selected_piece.rect.y // SQUARE_SIZE) # Rect pos y
             rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
             print("Rect pos ", rect_pos_y, rect_pos_x)
-                        
-            if square_position_x == rect_pos_x and square_position_y < rect_pos_y + 3:  
-                self.selected_piece.move(square_position_x, square_position_y, self.selected_piece.piece_name)
+            
+            piece_name = self.selected_piece.piece_name.split(".")[0] # Just a name like pawn etc
+
+            if piece_name == "pawn":  # Check only a black pawn
+                self.selected_piece.move_black_pawn(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
                 print("Move!")
+                self.selected_piece.first_move = True # Checks first move
                 print(self.selected_piece.piece_name)
-                self.selected_piece = None
-                self.move_is_over = True
+                self.selected_piece = None # None selected
+                self.move_is_over = True # Cant move anymore the selected piece
+                
+            
                 
 
 
@@ -83,14 +92,14 @@ class Game:
         """Draw the pieces on the screen"""
         for j in range(2):
             for i in range(8):
-                self.board[j][i] = Piece(join("img", "black", self.black_images[j][i]), 
+                Piece(join("img", "black", self.black_images[j][i]), 
                                          (self.dash_left + SQUARE_SIZE * (i + 0.5), self.dash_top + SQUARE_SIZE * (j + 0.5)), 
                                           "black", self.black_images[j][i], 
                                          (self.group_sprites, self.black_group))
 
         for j in range(2):
             for i in range(8):
-                self.board[j+6][i] = Piece(join("img", "white", self.white_images[j][i]), 
+                Piece(join("img", "white", self.white_images[j][i]), 
                                          (self.dash_left + SQUARE_SIZE * (i + 0.5), self.dash_top + SQUARE_SIZE * (j + 6.5)), 
                                          "white", self.white_images[j][i], 
                                          (self.group_sprites, self.white_group))
