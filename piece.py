@@ -1,6 +1,6 @@
 
 from settings import *
-from circle import Circle
+
 
 class Piece(pygame.sprite.Sprite):
     """Class for all pieces"""
@@ -17,12 +17,10 @@ class Piece(pygame.sprite.Sprite):
         # First move for pawns
         self.first_move = False
 
-    def move_black_pawn(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+    def move_black_pawn(self, square_position_x, square_position_y):
         """Move the black pawns"""
-        move_squares = 2 if self.first_move else 3 # Checks first move
-        if square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares and not rect_pos_y > square_position_y: # Check x == x cant move if x + 1 ;and 3 = 2 squares to move; cant move back
-            self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
-            self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
+        self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
+        self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
         
     def move_black_rook(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
         """Move the black rooks"""

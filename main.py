@@ -1,6 +1,6 @@
 from settings import *
-from piece import *
-from circle import *
+from piece import Piece
+from circle import Circle
 
 
 
@@ -65,10 +65,17 @@ class Game:
             if piece.rect.collidepoint(mouse_pos):
                 if not self.selected_piece and not self.move_is_over:
                     self.selected_piece = piece # select a piece which is just selected
+                    self.piece_name = self.selected_piece.piece_name.split(".")[0] # Just a name like pawn etc
                      # Draw the circles
-                    self.number_move_pawn = 2 if self.selected_piece.first_move else 3
-                    for i in range(1, self.number_move_pawn):
-                        self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
+                    if self.piece_name == "pawn":
+                        self.number_move_pawn = 2 if self.selected_piece.first_move else 3
+                        for i in range(1, self.number_move_pawn):
+                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
+                    elif self.piece_name == "rook":
+                        for i in range(8):
+                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
+                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5) + SQUARE_SIZE * i, (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
+                    
                     #self.move_is_over = False 
                     print(self.selected_piece.piece_name)   
             
@@ -84,8 +91,6 @@ class Game:
             rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
             print("Rect pos ", rect_pos_y, rect_pos_x)
             
-            self.piece_name = self.selected_piece.piece_name.split(".")[0] # Just a name like pawn etc
-
             self.can_move = False
 
             # for j, row in enumerate(self.board):
@@ -95,16 +100,15 @@ class Game:
             #                 self.can_move = False
             # self.can_move = True
 
-
-            # Change postions in board list
-            self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
-            self.board[rect_pos_y][rect_pos_x] = None
-
-            if self.piece_name == "pawn":  # Check only a black pawn
-                self.selected_piece.move_black_pawn(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
+            move_squares = 2 if self.selected_piece.first_move else 3 # Checks first move 
+            if self.piece_name == "pawn" and square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares and not rect_pos_y > square_position_y: # Check x == x cant move if x + 1 ;and 3 = 2 squares to move; cant move back:  # Check only a black pawn
+                self.selected_piece.move_black_pawn(square_position_x, square_position_y)
                 print("Move!")
                 self.selected_piece.first_move = True # Checks first move
                 print(self.selected_piece.piece_name)
+                # Change postions in board list
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
+
                 self.selected_piece = None # None selected
                 self.move_is_over = True # Cant move anymore the selected piece
             elif self.piece_name == "rook":  # Check only a black rook
@@ -112,13 +116,20 @@ class Game:
                 print("Move!")
                 self.selected_piece.first_move = True # Checks first move
                 print(self.selected_piece.piece_name)
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
                 self.selected_piece = None # None selected
                 self.move_is_over = True # Cant move anymore the selected piece
+            
             print(self.board)
             # Delete all circles
             for circle in self.circles:
                 circle.kill()
                 
+
+    def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
+        """Changes the piece's board positions"""
+        self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
+        self.board[rect_pos_y][rect_pos_x] = None
 
 
     def draw_board_pieces(self):
