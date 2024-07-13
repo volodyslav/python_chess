@@ -49,7 +49,7 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    self.move_is_over = False # Check if movement is over, lets to go next piece
+                    self.move_is_over = False # Check if movement is over, let's go to the next piece
                     mouse_pos = event.pos
                     print(mouse_pos)
                     self.check_movement(mouse_pos)
@@ -66,11 +66,15 @@ class Game:
                 if not self.selected_piece and not self.move_is_over:
                     self.selected_piece = piece # select a piece which is just selected
                     self.piece_name = self.selected_piece.piece_name.split(".")[0] # Just a name like pawn etc
+                    self.piece_color = self.selected_piece.color
+
+                    self.move_diraction = 1 if self.piece_color == "black" else -1 # Check the piece's color
+
                      # Draw the circles
                     if self.piece_name == "pawn":
                         self.number_move_pawn = 2 if self.selected_piece.first_move else 3
                         for i in range(1, self.number_move_pawn):
-                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
+                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5) * self.move_diraction, (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i) * self.move_diraction, self.group_sprites))
                     elif self.piece_name == "rook":
                         for i in range(8):
                             self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
@@ -91,40 +95,56 @@ class Game:
             rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
             print("Rect pos ", rect_pos_y, rect_pos_x)
             
-            self.can_move = False
-
-            # for j, row in enumerate(self.board):
-            #     for i in row:
-            #         for k in range(rect_pos_y, square_position_y):
-            #             if self.board[j][k] != None:
-            #                 self.can_move = False
-            # self.can_move = True
+            # Checks if we can move when there is None in the next square 
+            self.can_move = True
+            # Vertical movements down
+            for k in range(rect_pos_y + 1, square_position_y + 1):
+                if self.board[k][rect_pos_x] != None:
+                    self.can_move = False
+                else:
+                    self.can_move = True
+            # Horizontal movements right
+            for k in range(rect_pos_x + 1, square_position_x + 1):
+                if self.board[rect_pos_y][k] != None:
+                    self.can_move = False
+                else:
+                    self.can_move = True
+            # Vertically up
+            for k in range(rect_pos_y + 1, square_position_y + 1, -1):
+                if self.board[k][rect_pos_x] == None:
+                    self.can_move = False
+                else:
+                    self.can_move = True
 
             move_squares = 2 if self.selected_piece.first_move else 3 # Checks first move 
-            if self.piece_name == "pawn" and square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares and not rect_pos_y > square_position_y: # Check x == x cant move if x + 1 ;and 3 = 2 squares to move; cant move back:  # Check only a black pawn
-                self.selected_piece.move_black_pawn(square_position_x, square_position_y)
-                print("Move!")
-                self.selected_piece.first_move = True # Checks first move
-                print(self.selected_piece.piece_name)
-                # Change postions in board list
-                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
+            if 0 <= square_position_x <= 7 and 0 <= square_position_y <= 7 and self.can_move: # Check if it mouse pos 0 <= pos <= 7 
+                if self.piece_name == "pawn" and square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares and not rect_pos_y > square_position_y: # Check x == x cant move if x + 1 ;and 3 = 2 squares to move; cant move back:  # Check only a black pawn
+                    self.selected_piece.move_black_pawn(square_position_x, square_position_y)
+                    print("Move!")
+                    self.selected_piece.first_move = True # Checks first move
+                    print(self.selected_piece.piece_name)
+                    # Change postions in board list
+                    self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
-                self.selected_piece = None # None selected
-                self.move_is_over = True # Cant move anymore the selected piece
-            elif self.piece_name == "rook":  # Check only a black rook
-                self.selected_piece.move_black_rook(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
-                print("Move!")
-                self.selected_piece.first_move = True # Checks first move
-                print(self.selected_piece.piece_name)
-                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
-                self.selected_piece = None # None selected
-                self.move_is_over = True # Cant move anymore the selected piece
-            
+                    self.selected_piece = None # None selected
+                    self.move_is_over = True # Cant move anymore the selected piece
+                elif self.piece_name == "rook":  # Check only a black rook
+                    self.selected_piece.move_black_rook(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
+                    print("Move!")
+                    self.selected_piece.first_move = True # Checks first move
+                    print(self.selected_piece.piece_name)
+                    self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
+                    self.selected_piece = None # None selected
+                    self.move_is_over = True # Cant move anymore the selected piece
+                
             print(self.board)
             # Delete all circles
-            for circle in self.circles:
-                circle.kill()
-                
+            self.delete_circles()
+
+    def delete_circles(self):
+        """Delete all circles after a movement"""    
+        for circle in self.circles:
+            circle.kill()      
 
     def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Changes the piece's board positions"""
