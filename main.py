@@ -72,6 +72,7 @@ class Game:
 
                      # Draw the circles
                    # Draw circles
+                    
                     if self.piece_name == "pawn":
                         self.number_move_pawn = 2 if self.selected_piece.first_move else 3
                         for i in range(1, self.number_move_pawn):
@@ -99,29 +100,32 @@ class Game:
             
             # Checks if we can move when there is None in the next square 
             
-
-            # Vertically up
+            self.can_move_rook = True
+            # Check rook to move
             for k in range(rect_pos_y + 1, square_position_y + 1):
-                print(k)
                 if self.board[k][rect_pos_x] != None:
-                    self.can_move = False
-                
-            # Horizontal movements right
+                    self.selected_piece.move_rook_vertical = True
+                    self.can_move_rook = False 
             for k in range(rect_pos_x + 1, square_position_x + 1):
                 if self.board[rect_pos_y][k] != None:
-                    self.can_move = False
-                    
-            # Horizontal movements left
-            for k in range(rect_pos_x + 1, square_position_x + 1):
+                    self.selected_piece.move_rook_horizontal = True
+                    self.can_move_rook = False 
+            for k in range(square_position_y, rect_pos_y + 1):
+                if self.board[k][rect_pos_x] != None:
+                    self.selected_piece.move_rook_vertical = True
+            for k in range(square_position_x, rect_pos_x + 1, ):
                 if self.board[rect_pos_y][k] != None:
-                    self.can_move = False
-                
+                    self.selected_piece.move_rook_horizontal = True
+                    self.can_move_rook = False 
+
+
 
             self.can_move_pawn = True
             # Check pawn to move
             for k in range(rect_pos_y + 1, square_position_y + 1):
                 if self.board[k][rect_pos_x] != None:
-                    self.can_move_pawn = False 
+                    self.can_move_pawn = False
+                    
                 
 
             move_squares = 2 if self.selected_piece.first_move else 3 # Checks first move 
@@ -138,7 +142,7 @@ class Game:
 
                         self.selected_piece = None # None selected
                         self.move_is_over = True # Cant move anymore the selected piece
-                elif self.piece_name == "rook":  # Check only a black rook
+                elif self.piece_name == "rook" and self.can_move_rook:  # Check only a black rook
                     self.selected_piece.move_black_rook(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
                     print("Move!")
                     self.selected_piece.first_move = True # Checks first move
