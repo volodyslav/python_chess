@@ -17,25 +17,24 @@ class Piece(pygame.sprite.Sprite):
         # First move for pawns
         self.first_move = False
 
-        # Rook move check
-        self.move_rook_horizontal = False
-        self.move_rook_vertical = False
+
 
     def move_black_pawn(self, square_position_x, square_position_y):
         """Move the black pawns"""
         self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
         self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
         
-    def move_black_rook(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+    def move_black_rook_horizontal(self, square_position_x, square_position_y, rect_pos_x):
         """Move the black rooks"""
-        if square_position_x == rect_pos_x and self.move_rook_horizontal: # Check movement horizontally 
-            self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
-            self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
-        elif square_position_y == rect_pos_y and self.move_rook_vertical: # Check movement vertically
+        if square_position_x == rect_pos_x: # Check movement horizontally 
             self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
             self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
 
-
+    def move_black_rook_vertical(self, square_position_x, square_position_y, rect_pos_y):
+        """Move the black rooks"""
+        if square_position_y == rect_pos_y: # Check movement vertically
+            self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
+            self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
     
     
    
