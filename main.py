@@ -67,22 +67,31 @@ class Game:
                     self.selected_piece = piece # select a piece which is just selected
                     self.piece_name = self.selected_piece.piece_name.split(".")[0] # Just a name like pawn etc
                     self.piece_color = self.selected_piece.color
+                    
+                    # Rect position on the board
+                    self.rect_pos_y = int(self.selected_piece.rect.y // SQUARE_SIZE) # Rect pos y
+                    self.rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
+                    print("Rect pos ", self.rect_pos_y, self.rect_pos_x)
 
                     self.move_diraction = 1 if self.piece_color == "black" else -1 # Check the piece's color
 
-                     # Draw the circles
-                   
-                    
+                    # Draw the circle !!!! Needs checking
                     if self.piece_name == "pawn":
                         self.number_move_pawn = 2 if self.selected_piece.first_move else 3
                         for i in range(1, self.number_move_pawn):
-                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
+                            if self.board[self.rect_pos_y + 1][self.rect_pos_x] == None: # Check if we have something in front of a pawn
+                                self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
                        
                     elif self.piece_name == "rook":
-                        for i in range(8):
-                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * i), self.group_sprites))
-                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5) + SQUARE_SIZE * i, (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
-                    
+                        count_x = 0
+                        count_y = 0
+                        while self.board[self.rect_pos_y + 1][self.rect_pos_x] == None and count_y < 8:
+                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5) + SQUARE_SIZE * count_y), self.group_sprites))
+                            count_y += 1
+                        while self.board[self.rect_pos_y][self.rect_pos_x + 1] == None and count_x < 8:
+                            self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5) + SQUARE_SIZE * count_x, (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
+                            count_x += 1
+                        
                     #self.move_is_over = False 
                     print(self.selected_piece.piece_name)   
             
@@ -143,19 +152,13 @@ class Game:
             square_position_y = mouse_pos[1] // SQUARE_SIZE # Shows the rows
             square_position_x = mouse_pos[0] // SQUARE_SIZE # Shows the columns
             print("Square pos ", square_position_y, square_position_x)
-
-            rect_pos_y = int(self.selected_piece.rect.y // SQUARE_SIZE) # Rect pos y
-            rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
-            print("Rect pos ", rect_pos_y, rect_pos_x)
-            
             # Checks if we can move when there is None in the next square 
             if 0 <= square_position_x <= 7 and 0 <= square_position_y <= 7: # Check if it mouse pos 0 <= pos <= 7 
                 move_squares = 2 if self.selected_piece.first_move else 3 # Checks first move 
-                if self.piece_name == "pawn" and square_position_x == rect_pos_x and square_position_y < rect_pos_y + move_squares and not rect_pos_y > square_position_y: # Check x == x cant move if x + 1 ;and 3 = 2 squares to move; cant move back:  # Check only a black pawn
-                    self.check_pawn_movement(rect_pos_y, rect_pos_x, square_position_y, square_position_x)
-                    
-                elif self.piece_name == "rook":  # Check only a black rook
-                    self.check_rook_movement(square_position_x, square_position_y, rect_pos_x, rect_pos_y)
+                if self.piece_name == "pawn" and square_position_x == self.rect_pos_x and square_position_y < self.rect_pos_y + move_squares and not self.rect_pos_y == square_position_y and  not self.rect_pos_y > square_position_y: # Check x == x cant move if x + 1 ;and 3 = 2 squares to move; cant move back:  # Check only a black pawn
+                    self.check_pawn_movement(self.rect_pos_y, self.rect_pos_x, square_position_y, square_position_x)
+                elif self.piece_name == "rook" and not square_position_x == self.rect_pos_x and not self.rect_pos_y == square_position_y:  # Check only a black rook
+                    self.check_rook_movement(square_position_x, square_position_y, self.rect_pos_x, self.rect_pos_y)
                 
             print(self.board)
             # Delete all circles
