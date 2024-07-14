@@ -127,8 +127,8 @@ class Game:
             self.move_is_over = True # Cant move anymore the selected piece
 
     def check_rook_movement(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
-        self.can_move_rook_horizontal = True
-        self.can_move_rook_vertical = True
+        # self.can_move_rook_horizontal = True
+        # self.can_move_rook_vertical = True
         # Check rook to move
         # for k in range(rect_pos_y + 1, square_position_y + 1):
         #     if self.board[k][rect_pos_x] != None:
