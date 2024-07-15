@@ -24,15 +24,12 @@ class Piece(pygame.sprite.Sprite):
         self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
         self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
         
-    def move_black_rook_horizontal(self, square_position_x, square_position_y, rect_pos_x):
+    def move_black_rook(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
         """Move the black rooks"""
         if square_position_x == rect_pos_x: # Check movement horizontally 
             self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
             self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
-
-    def move_black_rook_vertical(self, square_position_x, square_position_y, rect_pos_y):
-        """Move the black rooks"""
-        if square_position_y == rect_pos_y: # Check movement vertically
+        elif square_position_y == rect_pos_y: # Check movement vertically
             self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
             self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
     
