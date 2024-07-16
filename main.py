@@ -103,7 +103,18 @@ class Game:
                             if self.board[self.rect_pos_y][j] == None or j == self.rect_pos_x:
                                 self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
                             else: break
-                    
+                    elif self.piece_name == "knight":
+                        # Check from y rect to y + 3
+                        for i in range(self.rect_pos_y, self.rect_pos_y + 3):
+                            if self.board[i][self.rect_pos_x + 1] == None and 0 < i < 8:
+                                self.circles.append(Circle(((self.rect_pos_x + SQUARE_SIZE * 2.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                                self.circles.append(Circle(((self.rect_pos_x + SQUARE_SIZE * 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                        # Check from y rect to y - 3
+                        for i in range(self.rect_pos_y, self.rect_pos_y - 3, -1):
+                            if self.board[i][self.rect_pos_x - 1] == None and 0 < i < 8:
+                                self.circles.append(Circle(((self.rect_pos_x - SQUARE_SIZE * 2.5), (SQUARE_SIZE * (i - 0.5))), self.group_sprites))
+                                self.circles.append(Circle(((self.rect_pos_x - SQUARE_SIZE * 0.5), (SQUARE_SIZE * (i - 0.5))), self.group_sprites))
+                           
                     
                     #self.move_is_over = False 
                     
@@ -141,6 +152,20 @@ class Game:
                 self.selected_piece = None # None selected
                 self.move_is_over = True # Cant move anymore the selected piece
 
+    def check_knight_movement(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+        for circle in self.circles:
+            self.circle_x = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
+            self.circle_y = circle.rect.centery // SQUARE_SIZE
+            #print("Circle x y", self.circle_x, self.circle_y)
+
+            if square_position_x == self.circle_x and square_position_y == self.circle_y: # If circle == square_position
+                self.selected_piece.move_knight(square_position_x, square_position_y, rect_pos_x, rect_pos_y) # Move
+                print("Move!")
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
+                self.selected_piece = None # None selected
+                self.move_is_over = True # Cant move anymore the selected piece
+
+
     def check_movement(self, mouse_pos):
         """Check if the piece can move"""
         if self.selected_piece and not self.move_is_over:
@@ -154,7 +179,10 @@ class Game:
                     self.check_pawn_movement(self.rect_pos_y, self.rect_pos_x, square_position_y, square_position_x)
                 elif self.piece_name == "rook" and (not (square_position_x == self.rect_pos_x) or not (self.rect_pos_y == square_position_y)):  # Check only a black rook
                     self.check_rook_movement(square_position_x, square_position_y, self.rect_pos_x, self.rect_pos_y)
-                
+                elif self.piece_name == "knight":
+                    self.check_knight_movement(square_position_x, square_position_y, self.rect_pos_x, self.rect_pos_y)
+
+
             print(self.board)
             # Delete all circles
             self.delete_circles()
