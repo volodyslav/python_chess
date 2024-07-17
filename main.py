@@ -91,18 +91,39 @@ class Game:
         # Check from y rect to 8
         bishop_x = self.rect_pos_x
         bishop_y = self.rect_pos_y
-        for i in range(bishop_x + 1, 8):
-            bishop_y += 1
-            if 0 <= bishop_x + 1 < 8 and self.board[bishop_y][i] == None:
-                self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), (SQUARE_SIZE * (bishop_y + 0.5))), self.group_sprites))
+
+        # Check down with postive x
+        bishop_right_x = bishop_x
+        for i in range(bishop_y + 1, 8):
+            bishop_right_x += 1
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
+                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
             else: break
-        for i in range(bishop_x - 1, -7, -1):
-            bishop_y += 1
-            if 0 <= bishop_x -1 < 8 and self.board[bishop_y][i] == None:
-                self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), (SQUARE_SIZE * (bishop_y + 0.5))), self.group_sprites))
+
+        # Check up with negative x
+        bishop_right_x = bishop_x
+        for i in range(bishop_y - 1, -1, -1):
+            bishop_right_x -= 1
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
+                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+            else: break
+
+        # Check down with native x
+        bishop_right_x = bishop_x
+        for i in range(bishop_y + 1, 8):
+            bishop_right_x -= 1
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
+                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+            else: break
+
+        # Check up with positive x
+        bishop_right_x = bishop_x
+        for i in range(bishop_y - 1, -1, -1):
+            bishop_right_x += 1
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
+                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
             else: break
             
-
     def draw_pawn_circle(self):     
         self.number_move_pawn = 2 if self.selected_piece.first_move else 3
         for i in range(1, self.number_move_pawn):
