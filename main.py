@@ -104,16 +104,26 @@ class Game:
                                 self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
                             else: break
                     elif self.piece_name == "knight":
-                        # Check from y rect to y + 3
-                        for i in range(self.rect_pos_y, self.rect_pos_y + 3):
-                            if self.board[i][self.rect_pos_x + 1] == None and 0 < i < 8:
-                                self.circles.append(Circle(((self.rect_pos_x + SQUARE_SIZE * 2.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                                self.circles.append(Circle(((self.rect_pos_x + SQUARE_SIZE * 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                        # Check from y rect to y - 3
-                        for i in range(self.rect_pos_y, self.rect_pos_y - 3, -1):
-                            if self.board[i][self.rect_pos_x - 1] == None and 0 < i < 8:
-                                self.circles.append(Circle(((self.rect_pos_x - SQUARE_SIZE * 2.5), (SQUARE_SIZE * (i - 0.5))), self.group_sprites))
-                                self.circles.append(Circle(((self.rect_pos_x - SQUARE_SIZE * 0.5), (SQUARE_SIZE * (i - 0.5))), self.group_sprites))
+                        # Check from y rect to x + 1
+                        knight_x_pos = self.rect_pos_x
+                        knight_y_pos = self.rect_pos_y 
+                        for i in range(knight_x_pos + 1, knight_x_pos + 2):
+                            if  0 <= i < 8 and 0 <= knight_y_pos + 2 < 8 and self.board[knight_y_pos + 2][i] == None :
+                                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
+                                
+                        for i in range(knight_x_pos + 2, knight_x_pos + 3):
+                            if 0 <= i < 8 and 0 <= knight_y_pos + 1 < 8 and self.board[knight_y_pos + 1][i] == None:
+                                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
+                                
+                        # Check from y rect to x - 3
+                        for i in range(knight_x_pos - 1, knight_x_pos - 2,  -1): 
+                            if 0 <= i < 8 and 0 <= knight_y_pos + 2 < 8 and self.board[knight_y_pos + 2][i] == None:
+                                self.circles.append(Circle(((SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
+                        
+                        for i in range(knight_x_pos - 2, knight_x_pos - 3, -1):
+                            if 0 <= i < 8 and 0 <= knight_y_pos + 1 < 8 and self.board[knight_y_pos + 1][i] == None:
+                                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
+                                
                            
                     
                     #self.move_is_over = False 
