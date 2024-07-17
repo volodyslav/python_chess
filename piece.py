@@ -42,3 +42,10 @@ class Piece(pygame.sprite.Sprite):
         self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
         self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
     
+    def move_queen(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+        self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
+        self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 
+
+    def move_king(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+        self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 
+        self.rect.centery = (square_position_y + 0.5) * SQUARE_SIZE 

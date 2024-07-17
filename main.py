@@ -24,6 +24,7 @@ class Game:
         self.group_sprites = pygame.sprite.Group()
 
         # Black  and white groups
+        #self.piece_group = pygame.sprite.Group
         self.black_group = pygame.sprite.Group()
         self.white_group = pygame.sprite.Group()
 
@@ -84,8 +85,36 @@ class Game:
                         self.draw_knight_circle()
                     elif self.piece_name == "bishop":
                         self.draw_bishop_circle()
-                           
+                    elif self.piece_name == 'queen':
+                        self.draw_queen_circle()
+                    elif self.piece_name == 'king':
+                        self.draw_king_circle()
                     #self.move_is_over = False 
+
+    def draw_king_circle(self):
+        king_pos_x = self.rect_pos_x
+        king_pos_y = self.rect_pos_y
+
+        # Side right and left
+        if 0 <= king_pos_x + 1 < 8 and self.board[king_pos_y][king_pos_x + 1] == None: 
+            self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+        if 0 <= king_pos_x - 1 < 8 and self.board[king_pos_y][king_pos_x - 1] == None: 
+            self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+
+        # Bottom check
+        for i in range(king_pos_x - 1, king_pos_x + 2):
+            if 0 <= i < 8 and 0 <= king_pos_y + 1 < 8 and self.board[king_pos_y + 1][i] == None: 
+                self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y + 1.5)), self.group_sprites))
+            
+
+        # Top check
+        for i in range(king_pos_x - 1, king_pos_x + 2):
+            if 0 <= i < 8 and 0 <= king_pos_y - 1 < 8 and self.board[king_pos_y - 1][i] == None: 
+                self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y - 0.5)), self.group_sprites))
+            
+    def draw_queen_circle(self):
+        self.draw_bishop_circle()
+        self.draw_rook_circle()
 
     def draw_bishop_circle(self):
         # Check from y rect to 8
@@ -132,23 +161,23 @@ class Game:
                                  
     def draw_rook_circle(self):
         # Check from y rect to 8
-        for i in range(self.rect_pos_y, 8):
-            if self.board[i][self.rect_pos_x] == None or i == self.rect_pos_y:
+        for i in range(self.rect_pos_y + 1, 8):
+            if self.board[i][self.rect_pos_x] == None:
                 self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
             else: break
         # Check from y rect to 0
-        for i in range(self.rect_pos_y, -1, -1):
-            if self.board[i][self.rect_pos_x] == None or i == self.rect_pos_y:
+        for i in range(self.rect_pos_y - 1, -1, -1):
+            if self.board[i][self.rect_pos_x] == None:
                 self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
             else: break
         # Check from x rect to 8
-        for j in range(self.rect_pos_x, 8):
-            if self.board[self.rect_pos_y][j] == None or j == self.rect_pos_x:
+        for j in range(self.rect_pos_x + 1, 8):
+            if self.board[self.rect_pos_y][j] == None:
                 self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
             else: break
         # Check from x rect to 0
-        for j in range(self.rect_pos_x, -1, -1):
-            if self.board[self.rect_pos_y][j] == None or j == self.rect_pos_x:
+        for j in range(self.rect_pos_x - 1, -1, -1):
+            if self.board[self.rect_pos_y][j] == None:
                 self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
             else: break
 
@@ -243,6 +272,32 @@ class Game:
                 self.selected_piece = None # None selected
                 self.move_is_over = True # Cant move anymore the selected piece
 
+    def check_queen_movement(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+        for circle in self.circles:
+            self.circle_x = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
+            self.circle_y = circle.rect.centery // SQUARE_SIZE
+            #print("Circle x y", self.circle_x, self.circle_y)
+
+            if square_position_x == self.circle_x and square_position_y == self.circle_y: # If circle == square_position
+                self.selected_piece.move_queen(square_position_x, square_position_y, rect_pos_x, rect_pos_y) # Move
+                print("Move queen!")
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
+                self.selected_piece = None # None selected
+                self.move_is_over = True # Cant move anymore the selected piece
+
+
+    def check_king_movement(self, square_position_x, square_position_y, rect_pos_x, rect_pos_y):
+        for circle in self.circles:
+            self.circle_x = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
+            self.circle_y = circle.rect.centery // SQUARE_SIZE
+            #print("Circle x y", self.circle_x, self.circle_y)
+
+            if square_position_x == self.circle_x and square_position_y == self.circle_y: # If circle == square_position
+                self.selected_piece.move_king(square_position_x, square_position_y, rect_pos_x, rect_pos_y) # Move
+                print("Move queen!")
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
+                self.selected_piece = None # None selected
+                self.move_is_over = True # Cant move anymore the selected piece
 
     def check_movement(self, mouse_pos):
         """Check if the piece can move"""
@@ -261,6 +316,10 @@ class Game:
                     self.check_knight_movement(square_position_x, square_position_y, self.rect_pos_x, self.rect_pos_y)
                 elif self.piece_name == "bishop":
                     self.check_bishop_movement(square_position_x, square_position_y, self.rect_pos_x, self.rect_pos_y)
+                elif self.piece_name == "queen":
+                    self.check_queen_movement(square_position_x, square_position_y, self.rect_pos_x, self.rect_pos_y)
+                elif self.piece_name == "king":
+                    self.check_king_movement(square_position_x, square_position_y, self.rect_pos_x, self.rect_pos_y)
 
 
             print(self.board)
