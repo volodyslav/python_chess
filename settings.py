@@ -8,4 +8,4 @@ SQUARE_SIZE = 80
 
 CIRCLE_SIZE = 30
 
-PATH_COLOR = "blue"
+CIRCLE_COLOR = "blue"

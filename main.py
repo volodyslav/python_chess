@@ -1,6 +1,6 @@
 from settings import *
 from piece import Piece
-from circle import Circle
+from circle import Circle, CircleEnemy
 
 
 
@@ -82,11 +82,11 @@ class Game:
 
                     self.move_direction = 1 if self.piece_color == "black" else -1 # Check the piece's color
 
-                    # if self.piece_color == "white" and self.piece_color_move: # only white can move
-                    #     self.check_piece_name()
-                    # elif self.piece_color == "black" and not self.piece_color_move: # only black can move
-                    self.check_piece_name()
-            #self.move_is_over = False  
+                    if self.piece_color == "white" and self.piece_color_move: # only white can move
+                        self.check_piece_name()
+                    elif self.piece_color == "black" and not self.piece_color_move: # only black can move
+                        self.check_piece_name()
+            
                     
     def check_piece_name(self):
         """Draw the circles"""
@@ -171,15 +171,15 @@ class Game:
         for i in range(self.rect_pos_y + self.move_direction, self.rect_pos_y + self.number_move_pawn * self.move_direction, self.move_direction):
             if 0 <= i < 8 and self.board[i][self.rect_pos_x] == None: # Check if we have something in front of a pawn
                 self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, ( i + 0.5 ) * SQUARE_SIZE ), self.group_sprites))
-            else: break
+            
         # enemy circle
-        # for i in range(self.rect_pos_x - 1, self.rect_pos_x + 2, 2):
-        #     new_y = self.rect_pos_y + 1 * self.move_direction
-        #     if 0 <= i < 8 and 0 <= new_y < 8:
-        #         target = self.board[new_y][i]
-        #         if target is not None and target.color == self.enemy_color:
-        #             print(f"Enemy found at: ({i}, {new_y})")
-        #             self.circle_enemy.append(Circle(((i + 0.5) * SQUARE_SIZE, (new_y + 0.5) * SQUARE_SIZE), self.group_sprites))
+        for i in range(self.rect_pos_x - 1, self.rect_pos_x + 2, 2):
+            new_y = self.rect_pos_y + 1 * self.move_direction
+            if 0 <= i < 8 and 0 <= new_y < 8:
+                target = self.board[new_y][i]
+                if target is not None and target.color == self.enemy_color:
+                    print(f"Enemy found at: ({i}, {new_y})")
+                    self.circle_enemy.append(CircleEnemy(((i + 0.5) * SQUARE_SIZE, (new_y + 0.5) * SQUARE_SIZE), self.group_sprites))
 
     def draw_rook_circle(self):
         # Check from y rect to 8
@@ -233,29 +233,30 @@ class Game:
             if 0 <= i < 8 and 0 <= knight_y_pos - 1 < 8 and self.board[knight_y_pos - 1][i] == None:
                 self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 1 + 0.5))), self.group_sprites))
                 
-    def check_piece_movement(self, square_position_y, square_position_x):
+    def check_piece_movement(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Checks pawns movement"""
         # Check pawn to move
-        # for circle in self.circle_enemy:
-        #     self.circle_x_enemy = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
-        #     self.circle_y_enemy = circle.rect.centery // SQUARE_SIZE
+        for circle in self.circle_enemy:
+            self.circle_x_enemy = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
+            self.circle_y_enemy = circle.rect.centery // SQUARE_SIZE
 
         for circle in self.circles:
             self.circle_x = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
             self.circle_y = circle.rect.centery // SQUARE_SIZE
 
-            if square_position_x == self.circle_x and square_position_y == self.circle_y: # If circle == square_position
+            if square_position_x == self.circle_x and square_position_y == self.circle_y and self.board[square_position_y][square_position_x] == None: # If circle == square_position
                 self.selected_piece.move_piece(square_position_x, square_position_y)
                 print(f"Move! {self.selected_piece.piece_name}")
                 self.selected_piece.first_move = True # Checks first move
                 print(self.selected_piece.piece_name)
                 # Change postions in board list
-                self.change_board_position(square_position_y, square_position_x)
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
                 self.piece_color_move = True if not self.piece_color_move else False # Change the color to move
 
-                self.selected_piece = None # None selected
-                self.move_is_over = True # Cant move anymore the selected piece
+                
+        self.move_is_over = True # Cant move anymore the selected piece
+        self.selected_piece = None # None selected
 
     def check_movement(self, mouse_pos):
         """Check if the piece can move"""
@@ -264,8 +265,8 @@ class Game:
             square_position_x = mouse_pos[0] // SQUARE_SIZE # Shows the columns
             print("Square pos ", square_position_y, square_position_x)
             # Checks if we can move when there is None in the next square 
-            if 0 <= square_position_x <= 7 and 0 <= square_position_y <= 7: # Check if it mouse pos 0 <= pos <= 7 
-                self.check_piece_movement(square_position_y, square_position_x)
+            if 0 <= square_position_x < 8 and 0 <= square_position_y < 8: # Check if it mouse pos 0 <= pos <= 7 
+                self.check_piece_movement(square_position_y, square_position_x, self.rect_pos_y, self.rect_pos_x)
             print(self.board)
             # Delete all circles
             self.delete_circles()
@@ -280,10 +281,10 @@ class Game:
 
         self.circle_enemy.clear()   
 
-    def change_board_position(self, square_position_y, square_position_x):
+    def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Changes the piece's board positions"""
-        self.board[square_position_y][square_position_x] = self.board[self.rect_pos_y][self.rect_pos_x]
-        self.board[self.rect_pos_y][self.rect_pos_x] = None
+        self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
+        self.board[rect_pos_y][rect_pos_x] = None
 
     def draw_board_pieces(self):
         """Draw the pieces on the screen"""
