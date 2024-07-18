@@ -36,6 +36,7 @@ class Game:
 
         self.can_move = False # Check if nothing between piece and square to move 
 
+        self.piece_color_move = True # Check color before moving
         # Circles for movement
         self.circles = [] 
         
@@ -76,20 +77,28 @@ class Game:
 
                     self.move_direction = 1 if self.piece_color == "black" else -1 # Check the piece's color
 
-                    # Draw the circle 
-                    if self.piece_name == "pawn":
-                        self.draw_pawn_circle()
-                    elif self.piece_name == "rook":
-                        self.draw_rook_circle()
-                    elif self.piece_name == "knight":
-                        self.draw_knight_circle()
-                    elif self.piece_name == "bishop":
-                        self.draw_bishop_circle()
-                    elif self.piece_name == 'queen':
-                        self.draw_queen_circle()
-                    elif self.piece_name == 'king':
-                        self.draw_king_circle()
-                        
+                    if self.piece_color == "white" and self.piece_color_move: # only white can move
+                        self.check_piece_name()
+                    elif self.piece_color == "black" and not self.piece_color_move: # only black can move
+                        self.check_piece_name()
+              
+                    
+    def check_piece_name(self):
+        """Draw the circles"""
+        if self.piece_name == "pawn":
+            self.draw_pawn_circle()
+        elif self.piece_name == "rook":
+            self.draw_rook_circle()
+        elif self.piece_name == "knight":
+            self.draw_knight_circle()
+        elif self.piece_name == "bishop":
+            self.draw_bishop_circle()
+        elif self.piece_name == 'queen':
+            self.draw_queen_circle()
+        elif self.piece_name == 'king':
+            self.draw_king_circle()
+
+
     def draw_king_circle(self):
         king_pos_x = self.rect_pos_x
         king_pos_y = self.rect_pos_y
@@ -223,7 +232,9 @@ class Game:
                 self.selected_piece.first_move = True # Checks first move
                 print(self.selected_piece.piece_name)
                 # Change postions in board list
-                self.change_board_position(square_position_y, square_position_x, self.rect_pos_y, self.rect_pos_x)
+                self.change_board_position(square_position_y, square_position_x)
+
+                self.piece_color_move = True if not self.piece_color_move else False # Change the color to move
 
                 self.selected_piece = None # None selected
                 self.move_is_over = True # Cant move anymore the selected piece
@@ -248,10 +259,10 @@ class Game:
 
         self.circles.clear()   
 
-    def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
+    def change_board_position(self, square_position_y, square_position_x):
         """Changes the piece's board positions"""
-        self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
-        self.board[rect_pos_y][rect_pos_x] = None
+        self.board[square_position_y][square_position_x] = self.board[self.rect_pos_y][self.rect_pos_x]
+        self.board[self.rect_pos_y][self.rect_pos_x] = None
 
     def draw_board_pieces(self):
         """Draw the pieces on the screen"""
