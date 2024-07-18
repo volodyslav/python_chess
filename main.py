@@ -39,6 +39,8 @@ class Game:
         self.piece_color_move = True # Check color before moving
         # Circles for movement
         self.circles = [] 
+        # Circles for beating
+        self.circle_enemy = []
         
         self.draw_board_pieces()
 
@@ -63,6 +65,7 @@ class Game:
         """Selects a piece"""
         self.selected_piece = None
         
+        
         for piece in self.piece_group:
             if piece.rect.collidepoint(mouse_pos):
                 if not self.selected_piece and not self.move_is_over:
@@ -75,13 +78,15 @@ class Game:
                     self.rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
                     print("Rect pos ", self.rect_pos_y, self.rect_pos_x)
 
+                    self.enemy_color = "white" if self.piece_color == "black" else "black" # Checks enemy's color
+
                     self.move_direction = 1 if self.piece_color == "black" else -1 # Check the piece's color
 
-                    if self.piece_color == "white" and self.piece_color_move: # only white can move
-                        self.check_piece_name()
-                    elif self.piece_color == "black" and not self.piece_color_move: # only black can move
-                        self.check_piece_name()
-              
+                    # if self.piece_color == "white" and self.piece_color_move: # only white can move
+                    #     self.check_piece_name()
+                    # elif self.piece_color == "black" and not self.piece_color_move: # only black can move
+                    self.check_piece_name()
+            #self.move_is_over = False  
                     
     def check_piece_name(self):
         """Draw the circles"""
@@ -162,11 +167,20 @@ class Game:
             else: break
             
     def draw_pawn_circle(self):     
-        self.number_move_pawn = 2 if self.selected_piece.first_move else 3
-        for i in range(1, self.number_move_pawn):
-            if 0 <= self.rect_pos_y + 1 * self.move_direction < 8 and self.board[self.rect_pos_y + 1 * self.move_direction][self.rect_pos_x] == None: # Check if we have something in front of a pawn
-                self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (self.selected_piece.rect.centery + 0.5 ) + SQUARE_SIZE * i * self.move_direction), self.group_sprites))
-                                 
+        self.number_move_pawn = 2 if self.selected_piece.first_move else 3 # False == 2 moves
+        for i in range(self.rect_pos_y + self.move_direction, self.rect_pos_y + self.number_move_pawn * self.move_direction, self.move_direction):
+            if 0 <= i < 8 and self.board[i][self.rect_pos_x] == None: # Check if we have something in front of a pawn
+                self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, ( i + 0.5 ) * SQUARE_SIZE ), self.group_sprites))
+            else: break
+        # enemy circle
+        # for i in range(self.rect_pos_x - 1, self.rect_pos_x + 2, 2):
+        #     new_y = self.rect_pos_y + 1 * self.move_direction
+        #     if 0 <= i < 8 and 0 <= new_y < 8:
+        #         target = self.board[new_y][i]
+        #         if target is not None and target.color == self.enemy_color:
+        #             print(f"Enemy found at: ({i}, {new_y})")
+        #             self.circle_enemy.append(Circle(((i + 0.5) * SQUARE_SIZE, (new_y + 0.5) * SQUARE_SIZE), self.group_sprites))
+
     def draw_rook_circle(self):
         # Check from y rect to 8
         for i in range(self.rect_pos_y + 1, 8):
@@ -222,6 +236,10 @@ class Game:
     def check_piece_movement(self, square_position_y, square_position_x):
         """Checks pawns movement"""
         # Check pawn to move
+        # for circle in self.circle_enemy:
+        #     self.circle_x_enemy = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
+        #     self.circle_y_enemy = circle.rect.centery // SQUARE_SIZE
+
         for circle in self.circles:
             self.circle_x = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
             self.circle_y = circle.rect.centery // SQUARE_SIZE
@@ -257,7 +275,10 @@ class Game:
         for circle in self.circles:
             circle.kill()   
 
-        self.circles.clear()   
+        for circle in self.circle_enemy:
+            circle.kill()   
+
+        self.circle_enemy.clear()   
 
     def change_board_position(self, square_position_y, square_position_x):
         """Changes the piece's board positions"""
