@@ -235,11 +235,7 @@ class Game:
                 
     def check_piece_movement(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Checks pawns movement"""
-        # Check pawn to move
-        for circle in self.circle_enemy:
-            self.circle_x_enemy = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
-            self.circle_y_enemy = circle.rect.centery // SQUARE_SIZE
-
+        
         for circle in self.circles:
             self.circle_x = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
             self.circle_y = circle.rect.centery // SQUARE_SIZE
@@ -252,11 +248,36 @@ class Game:
                 # Change postions in board list
                 self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
-                self.piece_color_move = True if not self.piece_color_move else False # Change the color to move
-
+                self.piece_color_move = not self.piece_color_move # Change the color to move
+        # Attack the  Enemy    
+        for circle in self.circle_enemy:
+            self.circle_x_enemy = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
+            self.circle_y_enemy = circle.rect.centery // SQUARE_SIZE
+    
+            if square_position_x == self.circle_x_enemy and square_position_y == self.circle_y_enemy: # If circle == square_position
+                enemy_kill = self.board[square_position_y][square_position_x]
+                print(f"Kill! {enemy_kill.piece_name}")
+                enemy_kill.kill() # Kill the sprite
+                enemy_kill = None # Clear the board
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x) # Change on the board
+                self.selected_piece.move_piece(square_position_x, square_position_y)
                 
+                self.piece_color_move = not self.piece_color_move # Change the color to move
+
         self.move_is_over = True # Cant move anymore the selected piece
         self.selected_piece = None # None selected
+
+    def check_movement_on_enemy(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
+        # Check pawn to move
+        
+                        
+                self.selected_piece.move_piece(square_position_x, square_position_y)
+                
+                self.delete_circles()
+                self.selected_piece.first_move = True # Checks first move
+                print(self.selected_piece.piece_name)
+                # Change postions in board list
+                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
     def check_movement(self, mouse_pos):
         """Check if the piece can move"""
@@ -265,8 +286,9 @@ class Game:
             square_position_x = mouse_pos[0] // SQUARE_SIZE # Shows the columns
             print("Square pos ", square_position_y, square_position_x)
             # Checks if we can move when there is None in the next square 
-            if 0 <= square_position_x < 8 and 0 <= square_position_y < 8: # Check if it mouse pos 0 <= pos <= 7 
+            if 0 <= square_position_x < 8 and 0 <= square_position_y < 8 :  # Check if it mouse pos 0 <= pos <= 7 
                 self.check_piece_movement(square_position_y, square_position_x, self.rect_pos_y, self.rect_pos_x)
+            
             print(self.board)
             # Delete all circles
             self.delete_circles()
