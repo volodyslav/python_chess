@@ -131,9 +131,9 @@ class Game:
 
     def draw_bishop_circle(self):
         # Check from y rect to 8
+        # Circle for movement
         bishop_x = self.rect_pos_x
         bishop_y = self.rect_pos_y
-
         # Check down with postive x
         bishop_right_x = bishop_x
         for i in range(bishop_y + 1, 8):
@@ -166,6 +166,8 @@ class Game:
                 self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
             else: break
             
+        # Draw Cirlces for Eneny position
+        
     def draw_pawn_circle(self):     
         self.number_move_pawn = 2 if self.selected_piece.first_move else 3 # False == 2 moves
         for i in range(self.rect_pos_y + self.move_direction, self.rect_pos_y + self.number_move_pawn * self.move_direction, self.move_direction):
@@ -184,24 +186,50 @@ class Game:
     def draw_rook_circle(self):
         # Check from y rect to 8
         for i in range(self.rect_pos_y + 1, 8):
-            if 0 <= self.rect_pos_y + 1 < 8 and self.board[i][self.rect_pos_x] == None:
-                self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-            else: break
+            if 0 <= i < 8:
+                target = self.board[i][self.rect_pos_x]
+                if target == None:
+                    self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: # Check if the enemy
+                    self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    break# When the rook see only one and then break
+                else:   
+                    break
         # Check from y rect to 0
         for i in range(self.rect_pos_y - 1, -1, -1):
-            if 0 <= self.rect_pos_y - 1 < 8 and self.board[i][self.rect_pos_x] == None:
-                self.circles.append(Circle(((self.selected_piece.rect.centerx + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-            else: break
+            if 0 <= i < 8:  
+                target = self.board[i][self.rect_pos_x]
+                if target == None:
+                    self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: # Check if the enemy
+                    self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    break # When the rook see only one and then break
+                else:   
+                    break
         # Check from x rect to 8
         for j in range(self.rect_pos_x + 1, 8):
-            if 0 <= self.rect_pos_x + 1 < 8 and self.board[self.rect_pos_y][j] == None:
-                self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
-            else: break
+            if 0 <= j < 8:
+                target = self.board[self.rect_pos_y][j]
+                if target == None:
+                    self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE ), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: 
+                    self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
+                    break# When the rook see only one and then break
+                else:   
+                    break
         # Check from x rect to 0
         for j in range(self.rect_pos_x - 1, -1, -1):
-            if 0 <= self.rect_pos_x - 1 < 8 and self.board[self.rect_pos_y][j] == None:
-                self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.selected_piece.rect.centery + 0.5) ), self.group_sprites))
-            else: break
+            if 0 <= j < 8: 
+                target = self.board[self.rect_pos_y][j]
+                if target == None:
+                    self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: # Check if the enemy
+                    self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
+                    break
+                else:   
+                    break
+        # Enemy circles
+
 
     def draw_knight_circle(self):  
         # Check from y rect to x + 1
@@ -253,8 +281,9 @@ class Game:
         for circle in self.circle_enemy:
             self.circle_x_enemy = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
             self.circle_y_enemy = circle.rect.centery // SQUARE_SIZE
-    
+
             if square_position_x == self.circle_x_enemy and square_position_y == self.circle_y_enemy: # If circle == square_position
+                print("Enemy", self.circle_x_enemy, self.circle_y_enemy)
                 enemy_kill = self.board[square_position_y][square_position_x]
                 print(f"Kill! {enemy_kill.piece_name}")
                 enemy_kill.kill() # Kill the sprite
@@ -267,17 +296,6 @@ class Game:
         self.move_is_over = True # Cant move anymore the selected piece
         self.selected_piece = None # None selected
 
-    def check_movement_on_enemy(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
-        # Check pawn to move
-        
-                        
-                self.selected_piece.move_piece(square_position_x, square_position_y)
-                
-                self.delete_circles()
-                self.selected_piece.first_move = True # Checks first move
-                print(self.selected_piece.piece_name)
-                # Change postions in board list
-                self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
     def check_movement(self, mouse_pos):
         """Check if the piece can move"""
@@ -301,6 +319,7 @@ class Game:
         for circle in self.circle_enemy:
             circle.kill()   
 
+        self.circles.clear()
         self.circle_enemy.clear()   
 
     def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
