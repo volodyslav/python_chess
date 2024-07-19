@@ -316,7 +316,26 @@ class Game:
 
         for i in range(knight_x_pos - 2, knight_x_pos - 3, -1):
             self._draw_knight_circles_y(i, knight_y_pos)
-                
+
+    def check_pawn_into_queen(self):         
+        # Change pawn when it reaches the top
+        if self.piece_name == "pawn":
+            for i in range(8):
+                if self.selected_piece.color == "white" and self.board[0][i] == self.selected_piece:
+                    self.selected_piece.kill()
+                    self.board[0][i] = Piece(join("img", "white", "queen.png"), 
+                                    (self.dash_left + SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (0.5)), # Dash bottom !!!!!
+                                    "white", "queen.png", 
+                                    (self.group_sprites, self.piece_group, self.black_group))
+                    print("White change")
+                elif self.selected_piece.color == "black" and self.board[7][i] == self.selected_piece:
+                    self.selected_piece.kill()
+                    self.board[7][i] = Piece(join("img", "black", "queen.png"), 
+                                    (self.dash_left + SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (7.5)), 
+                                    "black", "queen.png", 
+                                    (self.group_sprites, self.piece_group, self.black_group))
+
+
     def check_piece_movement(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Checks pawns movement"""
         
@@ -333,6 +352,9 @@ class Game:
                 self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
                 self.piece_color_move = not self.piece_color_move # Change the color to move
+
+                self.check_pawn_into_queen()
+
         # Attack the  Enemy    
         for circle in self.circle_enemy:
             self.circle_x_enemy = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
@@ -346,8 +368,12 @@ class Game:
                 enemy_kill = None # Clear the board
                 self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x) # Change on the board
                 self.selected_piece.move_piece(square_position_x, square_position_y)
-                
+                # Change a pawn into a queen
+                self.check_pawn_into_queen()
+
                 self.piece_color_move = not self.piece_color_move # Change the color to move
+
+                
 
         self.move_is_over = True # Cant move anymore the selected piece
         self.selected_piece = None # None selected
@@ -363,7 +389,7 @@ class Game:
             if 0 <= square_position_x < 8 and 0 <= square_position_y < 8 :  # Check if it mouse pos 0 <= pos <= 7 
                 self.check_piece_movement(square_position_y, square_position_x, self.rect_pos_y, self.rect_pos_x)
             
-            print(self.board)
+            # print(self.board)
             # Delete all circles
             self.delete_circles()
             
