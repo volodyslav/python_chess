@@ -103,27 +103,42 @@ class Game:
         elif self.piece_name == 'king':
             self.draw_king_circle()
 
-
     def draw_king_circle(self):
         king_pos_x = self.rect_pos_x
         king_pos_y = self.rect_pos_y
 
         # Side right and left
-        if 0 <= king_pos_x + 1 < 8 and self.board[king_pos_y][king_pos_x + 1] == None: 
-            self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
-        if 0 <= king_pos_x - 1 < 8 and self.board[king_pos_y][king_pos_x - 1] == None: 
-            self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+        if 0 <= king_pos_x + 1 < 8:
+            target = self.board[king_pos_y][king_pos_x + 1]
+            if target == None: # Check None
+                self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+            elif target != None and target.color == self.enemy_color:
+                self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+
+        if 0 <= king_pos_x - 1 < 8: 
+            target = self.board[king_pos_y][king_pos_x - 1]
+            if  target == None: 
+                self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+            elif target != None and target.color == self.enemy_color:
+                self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (king_pos_x - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
 
         # Bottom check
         for i in range(king_pos_x - 1, king_pos_x + 2):
-            if 0 <= i < 8 and 0 <= king_pos_y + 1 < 8 and self.board[king_pos_y + 1][i] == None: 
-                self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y + 1.5)), self.group_sprites))
-            
+            if 0 <= i < 8 and 0 <= king_pos_y + 1 < 8: 
+                target = self.board[king_pos_y + 1][i]
+                if target == None: 
+                    self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y + 1.5)), self.group_sprites))
+                elif target != None and target.color == self.enemy_color:
+                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y + 1.5)), self.group_sprites))
 
         # Top check
         for i in range(king_pos_x - 1, king_pos_x + 2):
-            if 0 <= i < 8 and 0 <= king_pos_y - 1 < 8 and self.board[king_pos_y - 1][i] == None: 
-                self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y - 0.5)), self.group_sprites))
+            if 0 <= i < 8 and 0 <= king_pos_y - 1 < 8: 
+                target = self.board[king_pos_y - 1][i]
+                if target == None: 
+                    self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y - 0.5)), self.group_sprites))
+                elif target != None and target.color == self.enemy_color:
+                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y - 0.5)), self.group_sprites))
             
     def draw_queen_circle(self):
         self.draw_bishop_circle()
@@ -138,33 +153,53 @@ class Game:
         bishop_right_x = bishop_x
         for i in range(bishop_y + 1, 8):
             bishop_right_x += 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
-                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-            else: break
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
+                target = self.board[i][bishop_right_x]
+                if target == None:
+                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color:
+                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    break # prevent next piece
+                else: break
 
         # Check up with negative x
         bishop_right_x = bishop_x
         for i in range(bishop_y - 1, -1, -1):
             bishop_right_x -= 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
-                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-            else: break
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
+                target = self.board[i][bishop_right_x]
+                if target == None:
+                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color:
+                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    break # prevent next piece
+                else: break
 
         # Check down with native x
         bishop_right_x = bishop_x
         for i in range(bishop_y + 1, 8):
             bishop_right_x -= 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
-                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-            else: break
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
+                target = self.board[i][bishop_right_x]
+                if target == None:
+                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color:
+                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    break # prevent next piece
+                else: break
 
         # Check up with positive x
         bishop_right_x = bishop_x
         for i in range(bishop_y - 1, -1, -1):
             bishop_right_x += 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and self.board[i][bishop_right_x] == None:
-                self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-            else: break
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
+                target = self.board[i][bishop_right_x]
+                if target == None:
+                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color:
+                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    break # prevent next piece
+                else: break
             
         # Draw Cirlces for Eneny position
         
