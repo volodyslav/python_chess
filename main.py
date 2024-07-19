@@ -194,7 +194,7 @@ class Game:
                     self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                     break# When the rook see only one and then break
                 else:   
-                    break
+                    break # Cant move if there is the same piece color forward
         # Check from y rect to 0
         for i in range(self.rect_pos_y - 1, -1, -1):
             if 0 <= i < 8:  
@@ -230,36 +230,57 @@ class Game:
                     break
         # Enemy circles
 
-
+    def _draw_knight_circles_x(self, i, knight_y_pos):
+        """Draws circles on y"""
+        if  0 <= i < 8: # Check forward y +
+            if 0 <= knight_y_pos + 2 < 8: # Checks if new 0< = y < 8 
+                target = self.board[knight_y_pos + 2][i]
+                if target == None: # Check new pos == None
+                    self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: # Check if we have enemy on new pos
+                    self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
+            
+            if  0 <= knight_y_pos - 2 < 8:
+                target = self.board[knight_y_pos - 2][i]
+                if target == None:
+                    self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 2 + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: # Check if we have enemy on new pos
+                    self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 2 + 0.5))), self.group_sprites))
+        
+    def _draw_knight_circles_y(self, i, knight_y_pos):
+        """Draws circles on y"""
+        if 0 <= i < 8: # check right x +
+            if 0 <= knight_y_pos + 1 < 8: 
+                target = self.board[knight_y_pos + 1][i]
+                if target == None:
+                    self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: # Check if we have enemy on new pos
+                    self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
+                    
+            if 0 <= knight_y_pos - 1 < 8: 
+                target = self.board[knight_y_pos - 1][i]
+                if target == None:
+                    self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 1 + 0.5))), self.group_sprites))
+                elif target != None and target.color == self.enemy_color: # Check if we have enemy on new pos
+                    self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 1 + 0.5))), self.group_sprites))
+    
     def draw_knight_circle(self):  
         # Check from y rect to x + 1
         knight_x_pos = self.rect_pos_x
         knight_y_pos = self.rect_pos_y 
 
         for i in range(knight_x_pos + 1, knight_x_pos + 2):
-            if  0 <= i < 8 and 0 <= knight_y_pos + 2 < 8 and self.board[knight_y_pos + 2][i] == None:
-                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
-            if  0 <= i < 8 and 0 <= knight_y_pos - 2 < 8 and self.board[knight_y_pos - 2][i] == None:
-                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 2 + 0.5))), self.group_sprites))
-                
+            self._draw_knight_circles_x(i, knight_y_pos)
+
         for i in range(knight_x_pos + 2, knight_x_pos + 3):
-            if 0 <= i < 8 and 0 <= knight_y_pos + 1 < 8 and self.board[knight_y_pos + 1][i] == None:
-                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
-            if 0 <= i < 8 and 0 <= knight_y_pos - 1 < 8 and self.board[knight_y_pos - 1][i] == None:
-                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 1 + 0.5))), self.group_sprites))
-                
+            self._draw_knight_circles_y(i, knight_y_pos)
+
         # Check from y rect to x - 1
         for i in range(knight_x_pos - 1, knight_x_pos - 2,  -1): 
-            if 0 <= i < 8 and 0 <= knight_y_pos + 2 < 8 and self.board[knight_y_pos + 2][i] == None:
-                self.circles.append(Circle(((SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
-            if 0 <= i < 8 and 0 <= knight_y_pos - 2 < 8 and self.board[knight_y_pos - 2][i] == None:
-                self.circles.append(Circle(((SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 2 + 0.5))), self.group_sprites))
-        
+            self._draw_knight_circles_x(i, knight_y_pos)
+
         for i in range(knight_x_pos - 2, knight_x_pos - 3, -1):
-            if 0 <= i < 8 and 0 <= knight_y_pos + 1 < 8 and self.board[knight_y_pos + 1][i] == None:
-                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
-            if 0 <= i < 8 and 0 <= knight_y_pos - 1 < 8 and self.board[knight_y_pos - 1][i] == None:
-                self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 1 + 0.5))), self.group_sprites))
+            self._draw_knight_circles_y(i, knight_y_pos)
                 
     def check_piece_movement(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Checks pawns movement"""
