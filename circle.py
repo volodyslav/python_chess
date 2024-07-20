@@ -17,6 +17,6 @@ class CircleEnemy(pygame.sprite.Sprite):
 class CircleCheck(pygame.sprite.Sprite):
     def __init__(self, color,  pos, *groups) -> None:
         super().__init__(*groups)
-        self.image = pygame.Surface((CIRCLE_SIZE, CIRCLE_SIZE))
+        self.image = pygame.Surface((CIRCLE_SIZE - 10, CIRCLE_SIZE + 10))
         self.rect = self.image.get_frect(center=pos)
         self.image.fill(color)
