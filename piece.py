@@ -16,6 +16,7 @@ class Piece(pygame.sprite.Sprite):
         # First move for pawns
         self.first_move = False
 
+
     def move_piece(self, square_position_x, square_position_y):
         """Move a piece"""
         self.rect.centerx = (square_position_x + 0.5) * SQUARE_SIZE 

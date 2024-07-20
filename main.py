@@ -1,6 +1,6 @@
 from settings import *
 from piece import Piece
-from circle import Circle, CircleEnemy
+from circle import *
 
 
 
@@ -30,6 +30,11 @@ class Game:
 
         self.clock = pygame.time.Clock()
         
+        # For checking if king check 
+        self.check_white_king = False
+        self.check_black_king = False
+        self.circles_ckeck = []
+
         # fOR MOVING
         self.selected_piece = None
         self.move_is_over = False
@@ -58,7 +63,7 @@ class Game:
                     print(mouse_pos)
                     self.check_movement(mouse_pos)
                     self.select_piece(mouse_pos)
-       
+            
             self.show_screen()
            
     def select_piece(self, mouse_pos):
@@ -103,6 +108,23 @@ class Game:
         elif self.piece_name == 'king':
             self.draw_king_circle()
 
+
+    def check_king_check(self):
+        for j in range(8):
+            for i in range(8):
+                king_pos = self.board[j][i] # King position 
+                if king_pos is not None and king_pos.piece_name == 'king.png':
+                    king_pos_x = i # Pos x
+                    king_pos_y = j # Pos y
+                    king_color = king_pos.color # king color
+                    enemy_color = "black" if king_color == "white" else "black" # enemy color
+                    print("King: ", king_pos_y, king_pos_x)
+                    # iter to find the enemy
+                    for e in range(king_pos_y + 1, 8): # From king to bottom
+                        if 0 <= e < 8 and enemy_color != king_color and self.board[e][king_pos_x] is not None:
+                            self.circles_ckeck.append(CircleCheck((SQUARE_SIZE * (king_pos_x + 0.5), SQUARE_SIZE * (e + 0.5)), self.group_sprites)) 
+
+
     def draw_king_circle(self):
         king_pos_x = self.rect_pos_x
         king_pos_y = self.rect_pos_y
@@ -110,7 +132,7 @@ class Game:
         # Side right and left
         if 0 <= king_pos_x + 1 < 8:
             target = self.board[king_pos_y][king_pos_x + 1]
-            if target == None: # Check None
+            if target is None: # Check None
                 self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
             elif target != None and target.color == self.enemy_color:
                 self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
@@ -352,6 +374,8 @@ class Game:
                 self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
                 self.piece_color_move = not self.piece_color_move # Change the color to move
+
+                self.check_king_check() # check ckeck or ckeckmate
 
                 self.check_pawn_into_queen()
 
