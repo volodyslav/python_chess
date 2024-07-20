@@ -113,17 +113,22 @@ class Game:
         for j in range(8):
             for i in range(8):
                 king_pos = self.board[j][i] # King position 
-                if king_pos is not None and king_pos.piece_name == 'king.png':
+                if king_pos is not None and king_pos.piece_name == 'king.png' and king_pos.color == "black":
                     king_pos_x = i # Pos x
                     king_pos_y = j # Pos y
                     king_color = king_pos.color # king color
-                    enemy_color = "black" if king_color == "white" else "black" # enemy color
+                    enemy_color = "black" if king_color == "white" else "white" # enemy color
                     print("King: ", king_pos_y, king_pos_x)
                     # iter to find the enemy
-                    for e in range(king_pos_y + 1, 8): # From king to bottom
-                        if 0 <= e < 8 and enemy_color != king_color and self.board[e][king_pos_x] is not None:
-                            self.circles_ckeck.append(CircleCheck((SQUARE_SIZE * (king_pos_x + 0.5), SQUARE_SIZE * (e + 0.5)), self.group_sprites)) 
-
+                    for ey in range(king_pos_y + 1, 8): # From king to bottom
+                        for ex in range(king_pos_x - 1, king_pos_x + 2): # x- 1 to x + 1
+                            if 0 <= ey < 8 and 0 <= ex < 8: 
+                                if self.board[ey][ex] is not None and self.board[ey][ex].color == "black":
+                                    break
+                                elif self.board[ey][ex] is not None and self.board[ey][ex].color == "white" :
+                                    self.circles_ckeck.append(CircleCheck("blue", (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (ey + 0.5)), self.group_sprites)) 
+                       
+                       
 
     def draw_king_circle(self):
         king_pos_x = self.rect_pos_x
@@ -260,6 +265,7 @@ class Game:
                     self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                 elif target != None and target.color == self.enemy_color: # Check if the enemy
                     self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+
                     break # When the rook see only one and then break
                 else:   
                     break
@@ -427,6 +433,14 @@ class Game:
 
         self.circles.clear()
         self.circle_enemy.clear()   
+ 
+    def delete_cirlce_check(self):
+        """Deletes the checkmate circles"""
+        for circle in self.circles_ckeck:
+            circle.kill()   
+
+        self.circles_ckeck.clear()   
+
 
     def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Changes the piece's board positions"""
