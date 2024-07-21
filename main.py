@@ -263,7 +263,7 @@ class Game:
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (ey + 0.5)), self.group_sprites)) 
                     self.circle_king_cant_move.append((i, ey)) # Cant move here
                     break
-                if new_target is not None and new_target.piece_name == "king.png":
+                if new_target is not None and new_target.piece_name == "king.png" and new_target.color != "black":
                     print("Check")
                 elif new_target is None: # If new target is the same color
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (ey + 0.5)), self.group_sprites)) 
@@ -277,7 +277,7 @@ class Game:
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (ey + 0.5)), self.group_sprites)) 
                     self.circle_king_cant_move.append((i, ey)) # Cant move here
                     break
-                if new_target is not None and new_target.piece_name == "king.png":
+                if new_target is not None and new_target.piece_name == "king.png" and new_target.color != "black":
                     print("Check")
                 elif new_target is None: # If new target is enemy
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (ey + 0.5)), self.group_sprites)) 
@@ -291,7 +291,7 @@ class Game:
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (j + 0.5)), self.group_sprites)) 
                     self.circle_king_cant_move.append((ex, j)) # Cant move here
                     break
-                if new_target is not None and new_target.piece_name == "king.png":
+                if new_target is not None and new_target.piece_name == "king.png" and new_target.color != "black":
                     print("Check")
                 elif new_target is None: # If new target is the same color
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (j + 0.5)), self.group_sprites)) 
@@ -305,7 +305,7 @@ class Game:
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (j + 0.5)), self.group_sprites)) 
                     self.circle_king_cant_move.append((ex, j)) # Cant move here
                     break
-                if new_target is not None and new_target.piece_name == "king.png":
+                if new_target is not None and new_target.piece_name == "king.png" and new_target.color != "black":
                     print("Check")
                 elif new_target is None: # If new target is the same color
                     self.circles_ckeck.append(CircleCheck("blue", 10, (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (j + 0.5)), self.group_sprites)) 
@@ -316,7 +316,7 @@ class Game:
     def check_king_pawn_circle(self, j, i):     
         # enemy circle
         for i in range(i - 1, i + 2, 2):
-            new_y = j + 1 # * self.move_direction
+            new_y = j + 1
             if 0 <= i < 8 and 0 <= new_y < 8:
                 new_target = self.board[new_y][i]
                 if new_target is not None and new_target.color == "black": # If new target is None
@@ -339,7 +339,7 @@ class Game:
             if new_target is not None and new_target.color == "black": # If new target is None
                 self.circles_ckeck.append(CircleCheck("brown", 5, (SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites)) 
                 self.circle_king_cant_move.append((king_pos_x + 1, king_pos_y)) # Cant move here
-            if new_target is not None and new_target.piece_name == "king.png":
+            if new_target is not None and new_target.piece_name == "king.png" and new_target.color != "black":
                 print("Check")
             elif new_target is None: # If new target is the same color
                 self.circles_ckeck.append(CircleCheck("brown", 5, (SQUARE_SIZE * (king_pos_x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites)) 
@@ -387,7 +387,7 @@ class Game:
         for j in range(8):
             for i in range(8):
                 target = self.board[j][i] # If board has a piece
-                if target is not None and  target.color == "black":
+                if target is not None:
                     if target.piece_name == "rook.png":
                         self.check_king_rook_circles(j, i)  
                     if target.piece_name == "bishop.png":
@@ -417,7 +417,7 @@ class Game:
 
         if 0 <= king_pos_x - 1 < 8 : 
             target = self.board[king_pos_y][king_pos_x - 1]
-            if  not (king_pos_x - 1, king_pos_y) in self.circle_king_cant_move:
+            if  not(king_pos_x - 1, king_pos_y) in self.circle_king_cant_move:
                 if  target is None: 
                     self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
                 elif target is not None and target.color == self.enemy_color:
@@ -427,7 +427,7 @@ class Game:
         for i in range(king_pos_x - 1, king_pos_x + 2):
             if 0 <= i < 8 and 0 <= king_pos_y + 1 < 8 : 
                 target = self.board[king_pos_y + 1][i]
-                if not (i, king_pos_y + 1) in self.circle_king_cant_move:
+                if  not (i, king_pos_y + 1) in self.circle_king_cant_move:
                     if target is None: 
                         self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y + 1.5)), self.group_sprites))
                     elif target is not None and target.color == self.enemy_color:
@@ -437,7 +437,7 @@ class Game:
         for i in range(king_pos_x - 1, king_pos_x + 2):
             if 0 <= i < 8 and 0 <= king_pos_y - 1 < 8 :  
                 target = self.board[king_pos_y - 1][i]
-                if not (i, king_pos_y - 1) in self.circle_king_cant_move:
+                if  not (i, king_pos_y - 1) in self.circle_king_cant_move:
                     if target is None: 
                         self.circles.append(Circle((SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (king_pos_y - 0.5)), self.group_sprites))
                     elif target is not None and target.color == self.enemy_color:
@@ -511,7 +511,8 @@ class Game:
         for i in range(self.rect_pos_y + self.move_direction, self.rect_pos_y + self.number_move_pawn * self.move_direction, self.move_direction):
             if 0 <= i < 8 and self.board[i][self.rect_pos_x] == None: # Check if we have something in front of a pawn
                 self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, ( i + 0.5 ) * SQUARE_SIZE ), self.group_sprites))
-            
+            else: break
+
         # enemy circle
         for i in range(self.rect_pos_x - 1, self.rect_pos_x + 2, 2):
             new_y = self.rect_pos_y + 1 * self.move_direction
