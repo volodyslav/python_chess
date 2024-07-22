@@ -313,10 +313,10 @@ class Game:
                 else:
                     break # Check enemy color 
 
-    def check_king_pawn_circle(self, j, i):     
+    def check_king_pawn_circle(self, j, i, color):     
         # enemy circle
         for i in range(i - 1, i + 2, 2):
-            new_y = j + 1
+            new_y = j + 1 if color == 0 else j - 1
             if 0 <= i < 8 and 0 <= new_y < 8:
                 new_target = self.board[new_y][i]
                 if new_target is not None and new_target.color == "black": # If new target is None
@@ -398,7 +398,10 @@ class Game:
                     if target.piece_name == "knight.png":
                         self.check_king_knight_circle(j, i)
                     if target.piece_name == "pawn.png":
-                        self.check_king_pawn_circle(j, i)
+                        if target.color == "black":
+                            self.check_king_pawn_circle(j, i, 0)
+                        elif target.color == "white":
+                            self.check_king_pawn_circle(j, i, 1)    
                     if target.piece_name == "king.png":
                         self.check_king_king_circle(j, i)
 
