@@ -87,6 +87,10 @@ class Game:
                     self.rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
                     print("Rect pos ", self.rect_pos_y, self.rect_pos_x)
 
+                    # Check when king ckecked and the piece with the same color cant move
+                    self.cant_move_black_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x].color == "black" and self.check_black_king) else False
+                    self.cant_move_white_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x].color == "white" and self.check_white_king) else False
+
                     self.enemy_color = "white" if self.piece_color == "black" else "black" # Checks enemy's color
 
                     self.move_direction = 1 if self.piece_color == "black" else -1 # Check the piece's color
@@ -129,7 +133,7 @@ class Game:
                         #self.circles_ckeck.append(CircleCheck("red", 14, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (knight_y_pos + 2 + 0.5)), self.group_sprites)) 
                         self.circle_white_king_cant_move.append((i, knight_y_pos + 2)) # Cant move here
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check knight {new_target.color} king")
                     # Check based on the color 
@@ -144,7 +148,7 @@ class Game:
                         self.circle_king_cant_move.append((i, knight_y_pos + 2)) # Cant move here
                     elif color == "white":
                         self.circle_white_king_cant_move.append((i, knight_y_pos + 2)) # Cant move here
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
             
             if  0 <= knight_y_pos - 2 < 8:
                 new_target = self.board[knight_y_pos - 2][i]
@@ -156,7 +160,7 @@ class Game:
                         #self.circles_ckeck.append(CircleCheck("red", 14, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (knight_y_pos - 2 + 0.5)), self.group_sprites)) 
                         self.circle_white_king_cant_move.append((i, knight_y_pos - 2)) # Cant move here
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check knight {new_target.color} king")
                     # Check based on the color 
@@ -171,8 +175,6 @@ class Game:
                         self.circle_king_cant_move.append((i, knight_y_pos - 2)) # Cant move here
                     elif color == "white":
                         self.circle_white_king_cant_move.append((i, knight_y_pos - 2)) # Cant move here
-                        
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
 
     def draw_king_knight_circles_y(self, i, knight_y_pos, color):
         """Draws circles on y"""
@@ -187,7 +189,7 @@ class Game:
                         #self.circles_ckeck.append(CircleCheck("red", 14, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (knight_y_pos + 1 + 0.5)), self.group_sprites)) 
                         self.circle_white_king_cant_move.append((i, knight_y_pos + 1)) # Cant move here
                     
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check knight {new_target.color} king")
@@ -204,7 +206,7 @@ class Game:
                     elif color == "white":
                         self.circle_white_king_cant_move.append((i, knight_y_pos + 1)) # Cant move here
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king    
+                
 
             if 0 <= knight_y_pos - 1 < 8: 
                 new_target = self.board[knight_y_pos - 1][i]
@@ -216,13 +218,13 @@ class Game:
                         #self.circles_ckeck.append(CircleCheck("red", 14, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (knight_y_pos - 1 + 0.5)), self.group_sprites)) 
                         self.circle_white_king_cant_move.append((i, knight_y_pos - 1)) # Cant move here
                   
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check knight {new_target.color} king")
                     # Check based on the color 
-                    if new_target.color == "black" and color == "black":
+                    if new_target.color == "black":
                         self.check_black_king = True
-                    elif new_target.color == "white" and color == "white":
+                    elif new_target.color == "white":
                         self.check_white_king = True
 
                 elif new_target is None: # If new target is the same color
@@ -231,8 +233,6 @@ class Game:
                         self.circle_king_cant_move.append((i, knight_y_pos - 1)) # Cant move here
                     elif color == "white":
                         self.circle_white_king_cant_move.append((i, knight_y_pos - 1)) # Cant move here
-
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
 
     def check_king_knight_circle(self, j, i, color):  
         # Check from y rect to x + 1
@@ -271,7 +271,7 @@ class Game:
                         break
                     else: # Cant check over a piece
                         break
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
 
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check bishop {new_target.color} king")
@@ -288,7 +288,7 @@ class Game:
                     elif color == "white":
                         self.circle_white_king_cant_move.append((bishop_right_x, i)) # Cant move here
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 else:
                     break # Check enemy color
 
@@ -309,7 +309,7 @@ class Game:
                         break
                     else: # Cant check over a piece
                         break
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
 
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check bishop {new_target.color} king")
@@ -325,7 +325,7 @@ class Game:
                         self.circle_king_cant_move.append((bishop_right_x, i)) # Cant move here
                     elif color == "white":
                         self.circle_white_king_cant_move.append((bishop_right_x, i)) # Cant move here
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 else:
                     break # Check enemy color
 
@@ -346,7 +346,7 @@ class Game:
                         break
                     else: # Cant check over a piece
                         break
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
 
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check bishop {new_target.color} king")
@@ -363,7 +363,7 @@ class Game:
                     elif color == "white":
                         self.circle_white_king_cant_move.append((bishop_right_x, i)) # Cant move here
                         
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 else:
                     break # Check enemy color
 
@@ -385,7 +385,7 @@ class Game:
                     else: # Cant check over a piece
                         break
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check bishop {new_target.color} king")
                     # Check based on the color 
@@ -401,7 +401,7 @@ class Game:
                     elif color == "white":
                         self.circle_white_king_cant_move.append((bishop_right_x, i)) # Cant move here
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 else:
                     break # Check enemy color
 
@@ -422,7 +422,7 @@ class Game:
                     else: # Cant do
                         break
 
-                    #self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+                
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check rook {new_target.color} king")
                     # Check based on the color 
@@ -437,7 +437,7 @@ class Game:
                     elif color == "white":
                         self.circle_white_king_cant_move.append((i, ey)) # Cant move here
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 else:
                     break # Check enemy color
 
@@ -455,7 +455,7 @@ class Game:
                         break
                     else: # Cant do
                         break
-                    #self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+                
 
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check rook {new_target.color} king")
@@ -472,7 +472,7 @@ class Game:
                     elif color == "white":
                         self.circle_white_king_cant_move.append((i, ey))
                     
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 else:
                     break
 
@@ -490,7 +490,7 @@ class Game:
                         break
                     else: # Cant do
                         break
-                    #self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+                
 
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check rook {new_target.color} king")
@@ -507,7 +507,7 @@ class Game:
                     elif color == "white":
                         self.circle_white_king_cant_move.append((ex, j)) # Cant move here
 
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+            
                 else:
                     break # Check enemy color   
 
@@ -525,7 +525,7 @@ class Game:
                         break
                     else: # Cant do
                         break
-                    #self.king_is_not_checked() # Make self.check_color = false when move or protect the king
+                
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     print(f"Check rook {new_target.color} king")    
                     # Check based on the color 
@@ -540,7 +540,6 @@ class Game:
                         self.circle_king_cant_move.append((ex, j)) # Cant move here
                     elif color == "white":
                         self.circle_white_king_cant_move.append((ex, j)) # Cant move here
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
                 else:
                     break # Check enemy color 
 
@@ -562,20 +561,16 @@ class Game:
                     if new_target.color == "black" and color == "black": # If new target is None
                         #self.circles_ckeck.append(CircleCheck("yellow", 18, (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (new_y + 0.5)), self.group_sprites)) 
                         self.circle_king_cant_move.append((ex, new_y)) # Cant move here
-                        #break
                     if new_target.color == "white" and color == "white": # If new target is None
                         #self.circles_ckeck.append(CircleCheck("yellow", 18, (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (new_y + 0.5)), self.group_sprites)) 
                         self.circle_white_king_cant_move.append((ex, new_y)) # Cant move here
-                        #break
-                    #self.king_is_not_checked() # Make self.check_color = false when move or protect the king
-            
+
                 elif new_target is None: # If new target is the same color
                     #self.circles_ckeck.append(CircleCheck("yellow", 18, (SQUARE_SIZE * (ex + 0.5), SQUARE_SIZE * (new_y + 0.5)), self.group_sprites)) 
                     if color == "black":
                         self.circle_king_cant_move.append((ex, new_y)) # Cant move here
                     if color == "white":
                         self.circle_white_king_cant_move.append((ex, new_y))
-                    self.king_is_not_checked() # Make self.check_color = false when move or protect the king
                 else:
                     break # Check enemy color
 
@@ -655,7 +650,7 @@ class Game:
 
     def check_king_check(self):
         """King checkmate check"""
-        #print("Check black white", self.check_black_king, self.check_white_king)
+        print(f"King checked white = {self.check_white_king}, black = {self.check_black_king}")
         for j in range(8):
             for i in range(8):
                 target = self.board[j][i] # If board has a piece
@@ -754,7 +749,7 @@ class Game:
         for i in range(bishop_y + 1, 8):
             bishop_right_x += 1
             if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
-                target = self.board[i][bishop_right_x]
+                target = self.board[i][bishop_right_x] # Position where we are moving
                 if target == None:
                     self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                 elif target != None and target.color == self.enemy_color:
@@ -822,7 +817,7 @@ class Game:
     def draw_rook_circle(self):
         # Check from y rect to 8
         for i in range(self.rect_pos_y + 1, 8):
-            if 0 <= i < 8:
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces:
                 target = self.board[i][self.rect_pos_x]
                 if target == None:
                     self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
@@ -833,7 +828,7 @@ class Game:
                     break # Cant move if there is the same piece color forward
         # Check from y rect to 0
         for i in range(self.rect_pos_y - 1, -1, -1):
-            if 0 <= i < 8:  
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces: # Check if king is not checked 
                 target = self.board[i][self.rect_pos_x]
                 if target == None:
                     self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
@@ -845,7 +840,7 @@ class Game:
                     break
         # Check from x rect to 8
         for j in range(self.rect_pos_x + 1, 8):
-            if 0 <= j < 8:
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces: # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 if target == None:
                     self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE ), self.group_sprites))
@@ -856,7 +851,7 @@ class Game:
                     break
         # Check from x rect to 0
         for j in range(self.rect_pos_x - 1, -1, -1):
-            if 0 <= j < 8: 
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces: # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 if target == None:
                     self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
@@ -870,14 +865,14 @@ class Game:
     def _draw_knight_circles_x(self, i, knight_y_pos):
         """Draws circles on y"""
         if  0 <= i < 8: # Check forward y +
-            if 0 <= knight_y_pos + 2 < 8: # Checks if new 0< = y < 8 
+            if 0 <= knight_y_pos + 2 < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces: # Checks if new 0< = y < 8 
                 target = self.board[knight_y_pos + 2][i]
                 if target == None: # Check new pos == None
                     self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
                 elif target != None and target.color == self.enemy_color: # Check if we have enemy on new pos
                     self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
             
-            if  0 <= knight_y_pos - 2 < 8:
+            if  0 <= knight_y_pos - 2 < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces:
                 target = self.board[knight_y_pos - 2][i]
                 if target == None:
                     self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 2 + 0.5))), self.group_sprites))
@@ -887,14 +882,14 @@ class Game:
     def _draw_knight_circles_y(self, i, knight_y_pos):
         """Draws circles on y"""
         if 0 <= i < 8: # check right x +
-            if 0 <= knight_y_pos + 1 < 8: 
+            if 0 <= knight_y_pos + 1 < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces: 
                 target = self.board[knight_y_pos + 1][i]
                 if target == None:
                     self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
                 elif target != None and target.color == self.enemy_color: # Check if we have enemy on new pos
                     self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
                     
-            if 0 <= knight_y_pos - 1 < 8: 
+            if 0 <= knight_y_pos - 1 < 8 and not self.cant_move_black_pieces and not self.cant_move_white_pieces: 
                 target = self.board[knight_y_pos - 1][i]
                 if target == None:
                     self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 1 + 0.5))), self.group_sprites))
@@ -939,6 +934,7 @@ class Game:
 
     def check_piece_movement(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Checks pawns movement"""
+        self.king_is_not_checked()
         for circle in self.circles:
             self.circle_x = circle.rect.centerx // SQUARE_SIZE # Pos of a circle in the list circles and the board 
             self.circle_y = circle.rect.centery // SQUARE_SIZE
