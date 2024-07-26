@@ -429,9 +429,9 @@ class Game:
                 elif new_target is not None and new_target.piece_name == "king.png" and new_target.color != color:
                     #print(f"Check rook {new_target.color} king")
                     # Check based on the color 
-                    if new_target.color == "black" and color == "black":
+                    if new_target.color == "black":
                         self.check_black_king = True
-                    elif new_target.color == "white" and color == "white":
+                    elif new_target.color == "white":
                         self.check_white_king = True
 
                 elif new_target is None: # If new target is the same color
@@ -995,15 +995,42 @@ class Game:
             # Delete all circles
             
             self.delete_circles()
-            if self.board[square_position_y][square_position_x].color != self.enemy_color:
+
+            if self.board[square_position_y][square_position_x] is not None and self.board[square_position_y][square_position_x].color != self.enemy_color:
                 self.position_king_checked.append((square_position_y, square_position_x)) # Pos when a king is checked
             for j in range(8):
                 for i in range(8):
                     king = self.board[j][i]
                     if king is not None and king.piece_name == "king.png" and king.color == self.enemy_color:
-                        self.position_king_checked.append((j, i))
+                        #self.position_king_checked.append((j, i))
+                        # Find the difference with abs
+                        dif_x = square_position_x - i
+                        dif_y = square_position_y - j
+                        print(f"Diff x = {dif_x}, diff y = {dif_y}")
+                        if dif_x < 0 or dif_y < 0:
+                            if dif_x == 0: # If x == x
+                                for d_y in range(-1, dif_y, -1):
+                                    self.position_king_checked.append((d_y + j, square_position_x))
+                            elif dif_y == 0: # If y == y
+                                for d_x in range(-1, dif_x, -1):
+                                    self.position_king_checked.append((square_position_y, d_x + i))
+                            # else:
+                            #     for d_x, d_y in range(-1, dif_x, -1), range(-1, dif_y, -1):
+                            #         self.position_king_checked.append((d_y + j, d_x + i))
+
+                        elif dif_x > 0 or dif_y > 0:
+                            if dif_x == 0: # If x == x
+                                for d_y in range(1, dif_y):
+                                    self.position_king_checked.append((d_y + j, square_position_x))
+                            elif dif_y == 0: # If y == y
+                                for d_x in range(1, dif_x):
+                                    self.position_king_checked.append((square_position_y, d_x + i))
+                            # else:
+                            #     # for d_x, d_y in range(1, dif_x), range(1, dif_y):
+                            #     #     self.position_king_checked.append((d_y + j, d_x + i))
+
             print("Piece check pos ", self.position_king_checked)
-            # Find the difference
+            
 
             
     def delete_circles(self):
