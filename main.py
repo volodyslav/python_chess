@@ -804,7 +804,7 @@ class Game:
         for i in range(self.rect_pos_y + self.move_direction, self.rect_pos_y + self.number_move_pawn * self.move_direction, self.move_direction):
             if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked)) and self.board[i][self.rect_pos_x] == None: # Check if we have something in front of a pawn
                 self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, ( i + 0.5 ) * SQUARE_SIZE ), self.group_sprites))
-            else: break
+            #else: break
 
         # enemy circle
         for i in range(self.rect_pos_x - 1, self.rect_pos_x + 2, 2):
@@ -816,49 +816,68 @@ class Game:
                     self.circle_enemy.append(CircleEnemy(((i + 0.5) * SQUARE_SIZE, (new_y + 0.5) * SQUARE_SIZE), self.group_sprites))
 
     def draw_rook_circle(self):
+        """
+        Draws rook's circle to move towards and kill the enemy
+        """
         # Check from y rect to 8
         for i in range(self.rect_pos_y + 1, 8):
-            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked)):
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8:
                 target = self.board[i][self.rect_pos_x]
-                if target == None:
+                condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
+                if target == None and condition_to_move: # Move only when there no piece between the enemy and the piece
                     self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and target.color == self.enemy_color: # Check if the enemy
-                    self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                    break# When the rook see only one and then break
+                elif target != None and condition_to_move: # Check if the enemy
+                    if target.color != self.enemy_color:
+                        break   
+                    elif target.color == self.enemy_color: 
+                        self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                        break# When the rook see only one and then break
                 else:   
                     break # Cant move if there is the same piece color forward
         # Check from y rect to 0
         for i in range(self.rect_pos_y - 1, -1, -1):
-            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked)): # Check if king is not checked 
-                target = self.board[i][self.rect_pos_x]
-                if target == None:
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8: 
+                target = self.board[i][self.rect_pos_x]# Check if king is not checked
+                condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
+                if target == None and condition_to_move:
                     self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and target.color == self.enemy_color: # Check if the enemy
-                    self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-
-                    break # When the rook see only one and then break
+                elif target != None and condition_to_move: # Check if the enemy
+                    if target.color != self.enemy_color: # check if not enemy and can move
+                        break 
+                    elif target.color == self.enemy_color:
+                        self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                        break # When the rook see only one and then break
                 else:   
                     break
         # Check from x rect to 8
         for j in range(self.rect_pos_x + 1, 8):
-            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked)): # Check if king is not checked 
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8: # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
-                if target == None:
+                condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
+                if target == None and condition_to_move:
                     self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE ), self.group_sprites))
-                elif target != None and target.color == self.enemy_color: 
-                    self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
-                    break# When the rook see only one and then break
+                elif target != None and condition_to_move:
+                    if target.color == self.enemy_color: 
+                        self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
+                        break# When the rook see only one and then break
+                    elif target.color!= self.enemy_color: # check if not enemy and can move
+                        break
                 else:   
                     break
+
         # Check from x rect to 0
         for j in range(self.rect_pos_x - 1, -1, -1):
-            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked)): # Check if king is not checked 
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8: # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
-                if target == None:
+                condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
+                if target == None and condition_to_move:
                     self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
-                elif target != None and target.color == self.enemy_color: # Check if the enemy
-                    self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
-                    break
+                elif target != None and condition_to_move:
+                    if target.color == self.enemy_color: # Check if the enemy
+                        self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
+                        break
+                    elif target.color!= self.enemy_color: # Check if not enemy and can move
+                        break
                 else:   
                     break
         # Enemy circles
@@ -995,8 +1014,6 @@ class Game:
                 
                 self.check_piece_movement(square_position_y, square_position_x, self.rect_pos_y, self.rect_pos_x)
             # print(self.board)
-            
-            
 
             # Delete all circles
             self.delete_circles()
@@ -1014,28 +1031,23 @@ class Game:
                     dif_x = square_position_x - i
                     dif_y = square_position_y - j
                     print(f"Diff x = {dif_x}, diff y = {dif_y}")
-                    if dif_x < 0 or dif_y < 0:
-                        if dif_x == 0: # If x == x
-                            for d_y in range(-1, dif_y, -1):
-                                self.position_king_checked.append((d_y + j, square_position_x))
-                        elif dif_y == 0: # If y == y
-                            for d_x in range(-1, dif_x, -1):
-                                self.position_king_checked.append((square_position_y, d_x + i))
-                        else:
-                            for d in range(1, dif_y):
-                                self.position_king_checked.append((abs(d - j), abs(d - i)))
 
-                    elif dif_x > 0 or dif_y > 0:
-                        if dif_x == 0: # If x == x
-                            for d_y in range(1, dif_y):
-                                self.position_king_checked.append((d_y + j, square_position_x))
-                        elif dif_y == 0: # If y == y
-                            for d_x in range(1, dif_x):
-                                self.position_king_checked.append((square_position_y, d_x + i))
-                        else:
-                            for d in range(1, dif_x):
-                                self.position_king_checked.append((d + j, d + i))
-
+                    if dif_x == 0: # If x == x
+                        step_y = 1 if dif_y > 0 else -1
+                        for d_y in range(step_y, dif_y, step_y): 
+                            #CircleCheck("green", 10, (SQUARE_SIZE * (square_position_x + 0.5), SQUARE_SIZE * (d_y + j + 0.5)), self.group_sprites)
+                            self.position_king_checked.append((d_y + j, square_position_x))
+                    elif dif_y == 0: # If y == y
+                        step_x = 1 if dif_x > 0 else -1
+                        for d_x in range(step_x, dif_x, step_x):
+                            #CircleCheck("green", 20, (SQUARE_SIZE * (d_x + i + 0.5), SQUARE_SIZE * (square_position_y + 0.5)), self.group_sprites)
+                            self.position_king_checked.append((square_position_y, d_x + i))
+                    elif dif_x != 0 and dif_y != 0:
+                        step_y = 1 if dif_y > 0 else -1
+                        step_x = 1 if dif_x > 0 else -1
+                        for d in range(1, abs(dif_y)):
+                            #CircleCheck("blue", 10, (SQUARE_SIZE * (i + d * step_x + 0.5), SQUARE_SIZE * (j + d * step_y+ 0.5)), self.group_sprites)
+                            self.position_king_checked.append((j + d * step_y, i + d * step_x))
             
     def delete_circles(self):
         """Delete all circles after a movement"""    
@@ -1047,6 +1059,7 @@ class Game:
 
         self.circles.clear()
         self.circle_enemy.clear()   
+       
  
     def delete_cirlce_check(self):
         """Deletes the checkmate circles"""
