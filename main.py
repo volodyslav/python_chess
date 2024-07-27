@@ -741,6 +741,9 @@ class Game:
         self.draw_rook_circle()
 
     def draw_bishop_circle(self):
+        """
+        Draw the bish
+        """
         # Check from y rect to 8
         # Circle for movement
         bishop_x = self.rect_pos_x
@@ -749,53 +752,69 @@ class Game:
         bishop_right_x = bishop_x
         for i in range(bishop_y + 1, 8):
             bishop_right_x += 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked)): 
+            condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
                 target = self.board[i][bishop_right_x] # Position where we are moving
-                if target == None:
-                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and target.color == self.enemy_color:
-                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                    break # prevent next piece
-                else: break
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break  
+                elif condition_to_move:
+                    if target is None:
+                        self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    elif target is not None and target.color == self.enemy_color:
+                        self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                        break # prevent next piece
+                    else: break
 
         # Check up with negative x
         bishop_right_x = bishop_x
         for i in range(bishop_y - 1, -1, -1):
             bishop_right_x -= 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked)): 
+            condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
                 target = self.board[i][bishop_right_x]
-                if target == None:
-                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and target.color == self.enemy_color:
-                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                    break # prevent next piece
-                else: break
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break  
+                elif condition_to_move:
+                    if target == None:
+                        self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    elif target != None and target.color == self.enemy_color:
+                        self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                        break # prevent next piece
+                    else: break
 
         # Check down with native x
         bishop_right_x = bishop_x
         for i in range(bishop_y + 1, 8):
             bishop_right_x -= 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked)): 
+            condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
                 target = self.board[i][bishop_right_x]
-                if target == None:
-                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and target.color == self.enemy_color:
-                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                    break # prevent next piece
-                else: break
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break  
+                elif condition_to_move:
+                    if target == None:
+                        self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    elif target != None and target.color == self.enemy_color:
+                        self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                        break # prevent next piece
+                    else: break
 
         # Check up with positive x
         bishop_right_x = bishop_x
         for i in range(bishop_y - 1, -1, -1):
             bishop_right_x += 1
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked)): 
+            condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
                 target = self.board[i][bishop_right_x]
-                if target == None:
-                    self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and target.color == self.enemy_color:
-                    self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                    break # prevent next piece
-                else: break
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break  
+                elif condition_to_move: 
+                    if target == None:
+                        self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    elif target != None and target.color == self.enemy_color:
+                        self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                        break # prevent next piece
+                    else: break
             
         # Draw Cirlces for Eneny position
         
@@ -824,62 +843,63 @@ class Game:
             if 0 <= i < 8 and 0 <= self.rect_pos_x < 8:
                 target = self.board[i][self.rect_pos_x]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
-                if target == None and condition_to_move: # Move only when there no piece between the enemy and the piece
-                    self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and condition_to_move: # Check if the enemy
-                    if target.color != self.enemy_color:
-                        break   
-                    elif target.color == self.enemy_color: 
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break   
+                elif condition_to_move:
+                    if target == None: # Move only when there no piece between the enemy and the piece
+                        self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    elif target is not None and target.color == self.enemy_color: # Check if the enemy
                         self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                         break# When the rook see only one and then break
-                else:   
-                    break # Cant move if there is the same piece color forward
+                    else:   
+                        break # Cant move if there is the same piece color forward
         # Check from y rect to 0
         for i in range(self.rect_pos_y - 1, -1, -1):
             if 0 <= i < 8 and 0 <= self.rect_pos_x < 8: 
                 target = self.board[i][self.rect_pos_x]# Check if king is not checked
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
-                if target == None and condition_to_move:
-                    self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
-                elif target != None and condition_to_move: # Check if the enemy
-                    if target.color != self.enemy_color: # check if not enemy and can move
-                        break 
-                    elif target.color == self.enemy_color:
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break   
+                elif condition_to_move:
+                    if target == None:
+                        self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
+                    elif target != None and target.color == self.enemy_color: # Check if the enemy
                         self.circle_enemy.append(CircleEnemy(((self.rect_pos_x + 0.5) * SQUARE_SIZE, (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                         break # When the rook see only one and then break
-                else:   
-                    break
+                    else:   
+                        break
+                    
         # Check from x rect to 8
         for j in range(self.rect_pos_x + 1, 8):
             if 0 <= j < 8 and 0 <= self.rect_pos_y < 8: # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
-                if target == None and condition_to_move:
-                    self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE ), self.group_sprites))
-                elif target != None and condition_to_move:
-                    if target.color == self.enemy_color: 
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break  
+                elif condition_to_move:
+                    if target == None:
+                        self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE ), self.group_sprites))
+                    elif target != None and target.color == self.enemy_color: 
                         self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
                         break# When the rook see only one and then break
-                    elif target.color!= self.enemy_color: # check if not enemy and can move
+                    else:   
                         break
-                else:   
-                    break
 
         # Check from x rect to 0
         for j in range(self.rect_pos_x - 1, -1, -1):
             if 0 <= j < 8 and 0 <= self.rect_pos_y < 8: # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
-                if target == None and condition_to_move:
-                    self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
-                elif target != None and condition_to_move:
-                    if target.color == self.enemy_color: # Check if the enemy
+                if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
+                    break  
+                elif condition_to_move:
+                    if target == None:
+                        self.circles.append(Circle(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
+                    elif target != None and target.color == self.enemy_color: # Check if the enemy
                         self.circle_enemy.append(CircleEnemy(((SQUARE_SIZE * (j + 0.5)), (self.rect_pos_y + 0.5) * SQUARE_SIZE  ), self.group_sprites))
                         break
-                    elif target.color!= self.enemy_color: # Check if not enemy and can move
+                    else:   
                         break
-                else:   
-                    break
         # Enemy circles
 
     def _draw_knight_circles_x(self, i, knight_y_pos):
