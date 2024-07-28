@@ -651,7 +651,6 @@ class Game:
 
     def check_king_check(self):
         """King checkmate check"""
-        
         for j in range(8):
             for i in range(8):
                 target = self.board[j][i] # If board has a piece
@@ -1038,7 +1037,6 @@ class Game:
             # Delete all circles
             self.delete_circles()
 
-            
     def add_pos_check_can_move(self, square_position_x, square_position_y):
         """Adds positions where a piece can protect the king"""
         if self.board[square_position_y][square_position_x] is not None and self.board[square_position_y][square_position_x].color != self.enemy_color:
@@ -1079,8 +1077,7 @@ class Game:
 
         self.circles.clear()
         self.circle_enemy.clear()   
-       
- 
+
     def delete_cirlce_check(self):
         """Deletes the checkmate circles"""
         for circle in self.circles_ckeck:
@@ -1089,7 +1086,6 @@ class Game:
         self.circle_king_cant_move.clear()
         self.circle_white_king_cant_move.clear()
         self.circles_ckeck.clear()   
-
 
     def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Changes the piece's board positions"""
