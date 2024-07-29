@@ -41,7 +41,9 @@ class Game:
         self.circle_white_king_cant_move = []
 
         # For checking if king can be checked if a piece which protects the king moves
-        self.cant_move_king_can_be_checked = [] 
+        self.cant_move_king_can_be_checked = [] # black
+        self.cant_move_king_can_be_checked_white = [] # white
+
         self.cant_move_king_can_be_checked_circles = []
 
         # fOR MOVING
@@ -55,6 +57,8 @@ class Game:
         self.circles = [] 
         # Circles for beating
         self.circle_enemy = []
+
+        self.enemy_color = "black" # Checks enemy's color
         
         self.draw_board_pieces()
 
@@ -96,8 +100,6 @@ class Game:
                     self.cant_move_black_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x].color == "black" and self.check_black_king) else False
                     self.cant_move_white_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x].color == "white" and self.check_white_king) else False
 
-                    self.enemy_color = "white" if self.piece_color == "black" else "black" # Checks enemy's color
-
                     self.move_direction = 1 if self.piece_color == "black" else -1 # Check the piece's color
 
                     if self.piece_color == "white" and self.piece_color_move: # only white can move
@@ -127,8 +129,6 @@ class Game:
 
         # When you move your piece and not checkmate clear the list 
         self.position_king_checked.clear()
-        
-        
 
     def draw_king_knight_circles_x(self, i, knight_y_pos, color):
         """Draws circles on y"""
@@ -840,7 +840,7 @@ class Game:
         """
         # Check from y rect to 8
         for i in range(self.rect_pos_y + 1, 8):
-            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked) or self.rect_pos_x == self.position_king_checked[0][1]):
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked and (self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked_white) or self.rect_pos_x == self.position_king_checked[0][1]):
                 target = self.board[i][self.rect_pos_x]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -855,7 +855,7 @@ class Game:
                         break # Cant move if there is the same piece color forward
         # Check from y rect to 0
         for i in range(self.rect_pos_y - 1, -1, -1):
-            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked) or self.rect_pos_x == self.position_king_checked[0][1]): 
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked and (self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked_white) or self.rect_pos_x == self.position_king_checked[0][1]): 
                 target = self.board[i][self.rect_pos_x]# Check if king is not checked
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -871,7 +871,7 @@ class Game:
                     
         # Check from x rect to 8
         for j in range(self.rect_pos_x + 1, 8):
-            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked) or self.rect_pos_y == self.position_king_checked[0][0]): # Check if king is not checked 
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked and (self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked_white) or self.rect_pos_y == self.position_king_checked[0][0]): # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -887,7 +887,7 @@ class Game:
 
         # Check from x rect to 0
         for j in range(self.rect_pos_x - 1, -1, -1):
-            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked) or self.rect_pos_y == self.position_king_checked[0][0]): # Check if king is not checked 
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and (((self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked and (self.rect_pos_y, self.rect_pos_x) not in self.cant_move_king_can_be_checked_white) or self.rect_pos_y == self.position_king_checked[0][0]): # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -904,7 +904,7 @@ class Game:
 
     def _draw_knight_circles_x(self, i, knight_y_pos, knight_x_pos):
         """Draws circles on y"""
-        if  0 <= i < 8 and ((knight_y_pos, knight_x_pos) not in self.cant_move_king_can_be_checked): # Check forward y +
+        if  0 <= i < 8 and ((knight_y_pos, knight_x_pos) not in self.cant_move_king_can_be_checked ): # Check forward y +
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((knight_y_pos + 2, i) in self.position_king_checked))
             # If the king can be checked
             if 0 <= knight_y_pos + 2 < 8 and condition_to_move : 
@@ -993,9 +993,9 @@ class Game:
                 self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
                 self.piece_color_move = not self.piece_color_move # Change the color to move
+                self.enemy_color = "white" if self.enemy_color == "black" else "black" # Checks enemy's color
 
                 self.delete_cirlce_check() # Delete previous circles
-                
                 self.check_pawn_into_queen()
 
                 self.king_is_not_checked() # When move than set check can move cirles To False
@@ -1019,6 +1019,7 @@ class Game:
                 self.check_pawn_into_queen()
                 self.delete_cirlce_check() # Delete previous circles
                 self.piece_color_move = not self.piece_color_move # Change the color to move
+                self.enemy_color = "white" if self.enemy_color == "black" else "black" # Checks enemy's color
 
                 self.king_is_not_checked() # When move than To False
                 self.add_pos_check_can_move(square_position_x, square_position_y)
@@ -1035,6 +1036,7 @@ class Game:
             print("Piece check pos before ", self.position_king_checked)
             print("Square pos ", square_position_y, square_position_x)
             print("King can be checked", self.cant_move_king_can_be_checked)
+            print("King can be checked white", self.cant_move_king_can_be_checked_white)
 
             # Checks if we can move when there is None in the next square 
             if 0 <= square_position_x < 8 and 0 <= square_position_y < 8 :  # Check if it mouse pos 0 <= pos <= 7 
@@ -1046,26 +1048,48 @@ class Game:
             # Delete all circles
             self.delete_circles()
 
+    def delete_pos_can_be_checked(self):
+        """
+        This function kills any existing circles indicating positions where the king cannot be moved. Only black
+        """
+        # Kill circles (delete later)
+        for circle in self.cant_move_king_can_be_checked_circles:
+            circle.kill()
+        self.cant_move_king_can_be_checked_circles.clear()
+        self.cant_move_king_can_be_checked.clear()
+
+    def delete_pos_can_be_checked_white(self):
+        """
+        This function kills any existing circles indicating positions where the king cannot be moved. Only white
+        """
+        # Kill circles (delete later)
+        for circle in self.cant_move_king_can_be_checked_circles:
+            circle.kill()
+        self.cant_move_king_can_be_checked_circles.clear()
+        self.cant_move_king_can_be_checked_white.clear()
+
     def add_pos_can_be_checked(self):
+        """
+        This function finds the positions of rooks and queens, and checks if the king can be checked by them.
+        It also kills any existing circles indicating positions where the king cannot be moved.
+        """
         self.rooks_and_queen = [] # Check all occurences
         for j in range(8):
             for i in range(8): 
                 if self.board[j][i] is not None and self.board[j][i].piece_name in ["queen.png", "rook.png"]: # Find pos of rook and queen
                     self.rooks_and_queen.append((j, i))
-                    self.queen_rook_pos_color = self.board[j][i].color
 
         for j in range(8):
             for i in range(8):
                 king = self.board[j][i]
-                if king is not None and king.piece_name == "king.png" and king.color != self.queen_rook_pos_color:
+                if king is not None and king.piece_name == "king.png" and king.color != self.enemy_color:
+                    print(f"King = {j} and {i}")
                     # if there is no enemy in the front
-                    # Kill circles (delete later)
-                    for circle in self.cant_move_king_can_be_checked_circles:
-                        circle.kill()
-                    self.cant_move_king_can_be_checked_circles.clear()
-                    self.cant_move_king_can_be_checked.clear()
-                    
+                    self.delete_pos_can_be_checked() # Refresh pos after a certain move
+                    self.delete_pos_can_be_checked_white()
                     # Find the difference with abs
+                    count_black = 0 
+                    count_white = 0 
                     for q_r in self.rooks_and_queen:
                         dif_x = q_r[1] - i # X
                         dif_y = q_r[0] - j # rook's Y
@@ -1077,8 +1101,19 @@ class Game:
                                     protect_piece = self.board[j + d_y][i]
                                     if protect_piece is not None and protect_piece.piece_name != "king.png":
                                         if protect_piece.color == king.color: # king black == piece black
-                                            self.cant_move_king_can_be_checked_circles.append(CircleCheck("orange", 4, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (j + d_y + 0.5)), self.group_sprites))
-                                            self.cant_move_king_can_be_checked.append(((j + d_y), i))
+                                            if protect_piece.color == "black" and king.color == "black":
+                                                self.cant_move_king_can_be_checked.append(((j + d_y), i))
+                                                count_black += 1
+                                                self.cant_move_king_can_be_checked_circles.append(CircleCheck("white", 4, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (j + d_y + 0.5)), self.group_sprites))
+                                                if count_black > 1:
+                                                    self.delete_pos_can_be_checked() # delete all pos if we have two pieces protecting the king
+                                            if protect_piece.color == "white" and king.color == "white":
+                                                self.cant_move_king_can_be_checked_white.append(((j + d_y), i))
+                                                self.cant_move_king_can_be_checked_circles.append(CircleCheck("white", 4, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (j + d_y + 0.5)), self.group_sprites))
+                                                count_white += 1
+                                                if count_white > 1:
+                                                    self.delete_pos_can_be_checked_white() # delete all pos if we have two pieces protecting the king
+
                                         elif protect_piece.color != king.color and protect_piece.piece_name in ["queen.png", "rook.png"]: # King black != black
                                             print("Found queen enemy or rook!!!!!!!!")
                                             self.cant_move_king_can_be_checked_circles.append(CircleCheck("pink", 4, (SQUARE_SIZE * (i + 0.5), SQUARE_SIZE * (j + d_y + 0.5)), self.group_sprites))
