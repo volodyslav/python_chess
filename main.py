@@ -1092,13 +1092,13 @@ class Game:
         self.rooks_and_queen = [] # Check all occurences
         for j in range(8):
             for i in range(8): 
-                if self.board[j][i] is not None and self.board[j][i].piece_name in ["queen.png", "rook.png"]: # Find pos of rook and queen
+                if self.board[j][i] is not None and self.board[j][i].piece_name in ["queen.png", "rook.png"] and self.board[j][i].piece_name == self.enemy_color: # Find pos of rook and queen
                     self.rooks_and_queen.append((j, i))
 
         for j in range(8):
             for i in range(8):
                 king = self.board[j][i]
-                if king is not None and king.piece_name == "king.png" and king.color != self.enemy_color:
+                if king is not None and king.piece_name == "king.png" and king.color == self.enemy_color:
                     print(f"King = {j} and {i}")
                     # if there is no enemy in the front
                     self.delete_pos_can_be_checked_black() # Refresh pos after a certain move
@@ -1111,7 +1111,7 @@ class Game:
                     for q_r in self.rooks_and_queen:
                         dif_x = q_r[1] - i # X
                         dif_y = q_r[0] - j # rook's Y
-                        #print(f"Diff x = {dif_x}, diff y = {dif_y}")
+                        print(f"Diff x = {dif_x}, diff y = {dif_y}")
                         if dif_x == 0: # If x == x
                             step_y = 1 if dif_y > 0 else -1
                             for d_y in range(step_y, dif_y, step_y): 
@@ -1163,7 +1163,7 @@ class Game:
                                      
     def add_pos_check_can_move(self, square_position_x, square_position_y):
         """Adds positions where a piece can protect the king"""
-        if self.board[square_position_y][square_position_x] is not None and self.board[square_position_y][square_position_x].color != self.enemy_color:
+        if self.board[square_position_y][square_position_x] is not None and self.board[square_position_y][square_position_x].color == self.enemy_color:
             self.position_king_checked.append((square_position_y, square_position_x)) # Pos when a king is checked
         for j in range(8):
             for i in range(8):
