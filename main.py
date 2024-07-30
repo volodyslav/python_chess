@@ -993,6 +993,7 @@ class Game:
             self.circle_y = circle.rect.centery // SQUARE_SIZE
 
             if square_position_x == self.circle_x and square_position_y == self.circle_y and self.board[square_position_y][square_position_x] == None: # If circle == square_position
+                self.enemy_color = "white" if self.enemy_color == "black" else "black" # Checks enemy's color
                 self.selected_piece.move_piece(square_position_x, square_position_y)
                 print(f"Move! {self.selected_piece.piece_name}")
                 self.selected_piece.first_move = True # Checks first move
@@ -1001,7 +1002,7 @@ class Game:
                 self.change_board_position(square_position_y, square_position_x, rect_pos_y, rect_pos_x)
 
                 self.piece_color_move = not self.piece_color_move # Change the color to move
-                self.enemy_color = "white" if self.enemy_color == "black" else "black" # Checks enemy's color
+                
 
                 self.delete_cirlce_check() # Delete previous circles
                 self.check_pawn_into_queen()
@@ -1017,6 +1018,7 @@ class Game:
 
             if square_position_x == self.circle_x_enemy and square_position_y == self.circle_y_enemy: # If circle == square_position
                 print("Enemy", self.circle_x_enemy, self.circle_y_enemy)
+                self.enemy_color = "white" if self.enemy_color == "black" else "black" # Checks enemy's color
                 enemy_kill = self.board[square_position_y][square_position_x]
                 print(f"Kill! {enemy_kill.piece_name}")
                 enemy_kill.kill() # Kill the sprite
@@ -1027,7 +1029,7 @@ class Game:
                 self.check_pawn_into_queen()
                 self.delete_cirlce_check() # Delete previous circles
                 self.piece_color_move = not self.piece_color_move # Change the color to move
-                self.enemy_color = "white" if self.enemy_color == "black" else "black" # Checks enemy's color
+                
 
                 self.king_is_not_checked() # When move than To False
                 self.add_pos_check_can_move(square_position_x, square_position_y)
@@ -1109,7 +1111,7 @@ class Game:
                     for q_r in self.rooks_and_queen:
                         dif_x = q_r[1] - i # X
                         dif_y = q_r[0] - j # rook's Y
-                        print(f"Diff x = {dif_x}, diff y = {dif_y}")
+                        #print(f"Diff x = {dif_x}, diff y = {dif_y}")
                         if dif_x == 0: # If x == x
                             step_y = 1 if dif_y > 0 else -1
                             for d_y in range(step_y, dif_y, step_y): 
@@ -1159,8 +1161,6 @@ class Game:
                                             self.cant_move_king_can_be_checked_circles.append(CircleCheck("pink", 4, (SQUARE_SIZE * (i + d_x + 0.5), SQUARE_SIZE * (j + 0.5)), self.group_sprites))
                                             break
                                      
-                    
-
     def add_pos_check_can_move(self, square_position_x, square_position_y):
         """Adds positions where a piece can protect the king"""
         if self.board[square_position_y][square_position_x] is not None and self.board[square_position_y][square_position_x].color != self.enemy_color:
@@ -1168,11 +1168,11 @@ class Game:
         for j in range(8):
             for i in range(8):
                 king = self.board[j][i]
-                if king is not None and king.piece_name == "king.png" and king.color == self.enemy_color:
+                if king is not None and king.piece_name == "king.png" and king.color != self.enemy_color:
                     # Find the difference with abs
                     dif_x = square_position_x - i
                     dif_y = square_position_y - j
-                    #print(f"Diff x = {dif_x}, diff y = {dif_y}")
+                    print(f"Diff x = {dif_x}, diff y = {dif_y}")
                     if dif_x == 0: # If x == x
                         step_y = 1 if dif_y > 0 else -1
                         for d_y in range(step_y, dif_y, step_y): 
@@ -1191,11 +1191,7 @@ class Game:
                         for d in range(1, abs(dif_y)):
                             #self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i + d * step_x + 0.5), SQUARE_SIZE * (j + d * step_y+ 0.5)), self.group_sprites))
                             self.position_king_checked.append((j + d * step_y, i + d * step_x))
-                            # if 0 <= i + d * step_x < 8 and 0 <= j + d * step_y < 8:
-                            #     protect_piece = self.board[i + d * step_x][j + d * step_y]
-                            #     if 0 <= j + d * step_y < 8 and protect_piece is not None and protect_piece.piece_name != "king.png" and protect_piece.color != self.enemy_color:
-                            #         #self.cant_move_king_can_be_checked_circles.append(CircleCheck("orange", 4, (SQUARE_SIZE * (i + d * step_x + 0.5), SQUARE_SIZE * (j + d * step_y+ 0.5)), self.group_sprites))
-                            #         self.cant_move_king_can_be_checked.append(((j + d * step_y), (i + d * step_x)))           
+                                     
     def delete_circles(self):
         """Delete all circles after a movement"""    
         for circle in self.circles:
@@ -1216,7 +1212,6 @@ class Game:
         self.circle_white_king_cant_move.clear()
         self.circles_ckeck.clear()   
         
-
     def change_board_position(self, square_position_y, square_position_x, rect_pos_y, rect_pos_x):
         """Changes the piece's board positions"""
         self.board[square_position_y][square_position_x] = self.board[rect_pos_y][rect_pos_x]
