@@ -2,3 +2,4 @@ env
 img
 __pycache__
 *.txt
+.idea

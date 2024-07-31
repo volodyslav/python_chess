@@ -261,6 +261,7 @@ class Game:
     def check_king_bishop_circles(self, j, i, color):
         # Circle for movement
         bishop_x, bishop_y = i, j
+
         # Check down with postive x
         bishop_right_x = bishop_x
         for i in range(bishop_y + 1, 8):
@@ -1094,8 +1095,6 @@ class Game:
         This function finds the positions of rooks and queens, and checks if the king can be checked by them.
         It also kills any existing circles indicating positions where the king cannot be moved.
         """
-      
-
         for j in range(8):
             for i in range(8):
                 king = self.board[j][i]
@@ -1105,6 +1104,28 @@ class Game:
                     self.delete_pos_can_be_checked_black() # Refresh pos after a certain move
                     self.delete_pos_can_be_checked_white()
                     
+                    # Check if the king is in check by bishop
+                    for y in range(8):
+                        for x in range(8):
+                            if self.board[y][x] is not None and self.board[y][x].piece_name in ["bishop.png", "queen.png"] and self.board[y][x].color == self.enemy_color and king != self.enemy_color:
+                                   dif_y = j - y # Difference between king and bishop
+                                   dif_x = i - x
+                                   if (dif_y != 0 and dif_x != 0) and (abs(dif_y) == abs(dif_x)): 
+                                        step_y = 1 if dif_y > 0 else -1
+                                        step_x = 1 if dif_x > 0 else -1
+                                        for d in range(1, abs(dif_y)):
+                                            self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i - d * step_x + 0.5), SQUARE_SIZE * (j - d * step_y+ 0.5)), self.group_sprites))
+                                            if 0 <= y+d*step_y < 8 and 0 <= x+d*step_x < 8:
+                                                target = self.board[y+d*step_y][x+d*step_x] 
+                                                if target is not None and king.color == "white":
+                                                    self.cant_move_king_can_be_checked_white_x.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_white_y.append(y+d*step_y)
+                                                if target is not None and king.color == "black":
+                                                    self.cant_move_king_can_be_checked_black_x.append(y+d*step_y)
+                                                    self.cant_move_king_can_be_checked_black_y.append(x+d*step_x)
+
+
+                    # Rook
                     for y in range(8):
                         if self.board[y][i] is not None and self.board[y][i].piece_name in ["queen.png", "rook.png"] and self.board[y][i].color == self.enemy_color:
                                if self.enemy_color == "white":
@@ -1118,8 +1139,10 @@ class Game:
                                    self.cant_move_king_can_be_checked_black_y.append(j)
                                elif self.enemy_color == "black":
                                    self.cant_move_king_can_be_checked_white_y.append(j)
-                
+
+        
                     
+
     def add_pos_check_can_move(self, square_position_x, square_position_y):
         """Adds positions where a piece can protect the king"""
         if self.board[square_position_y][square_position_x] is not None and self.board[square_position_y][square_position_x].color == self.enemy_color:
