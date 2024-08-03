@@ -837,24 +837,24 @@ class Game:
         # Draw Cirlces for Eneny position
         
     def draw_pawn_circle(self):     
-        condition_protect_x = self.rect_pos_x not in self.cant_move_king_can_be_checked_black_x if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else self.rect_pos_x not in self.cant_move_king_can_be_checked_white_x 
-        condition_protect_y = self.rect_pos_y not in self.cant_move_king_can_be_checked_black_y if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else self.rect_pos_y not in self.cant_move_king_can_be_checked_white_y
-        # Can kill the bishop or queen if it's near the pawn 
-        condition_protect_x_bishop = self.rect_pos_x not in self.cant_move_king_can_be_checked_black_x_bishop if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else self.rect_pos_x not in self.cant_move_king_can_be_checked_white_x_bishop 
-        condition_protect_y_bishop = self.rect_pos_y not in self.cant_move_king_can_be_checked_black_y_bishop if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else self.rect_pos_y not in self.cant_move_king_can_be_checked_white_y_bishop   
+        # Protect from bishop if it's near 
+        condition_protect = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop)
+
+        # Protect from rook if it's near
+        condition_protect_rook = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x, self.cant_move_king_can_be_checked_black_y) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x, self.cant_move_king_can_be_checked_white_y)
 
         self.number_move_pawn = 2 if self.selected_piece.first_move else 3 # False == 2 moves
         # Move forward
         for i in range(self.rect_pos_y + self.move_direction, self.rect_pos_y + self.number_move_pawn * self.move_direction, self.move_direction):
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
-            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and condition_to_move and self.board[i][self.rect_pos_x] is None and condition_protect_x_bishop: # Check if we have something in front of a pawn
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and condition_to_move and self.board[i][self.rect_pos_x] is None and condition_protect: # Check if we have something in front of a pawn
                 self.circles.append(Circle(((self.rect_pos_x + 0.5) * SQUARE_SIZE, ( i + 0.5 ) * SQUARE_SIZE ), self.group_sprites))
             else: break # If we have something in front of a pawn
 
         # enemy circle
         for i in range(self.rect_pos_x - 1, self.rect_pos_x + 2, 2):
             new_y = self.rect_pos_y + 1 * self.move_direction
-            if 0 <= i < 8 and 0 <= new_y < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((new_y, i) in self.position_king_checked)) and condition_protect_x and condition_protect_y_bishop: # Check if we have something in front of a pawn
+            if 0 <= i < 8 and 0 <= new_y < 8 and ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((new_y, i) in self.position_king_checked)) and condition_protect_rook: # Check if we have something in front of a pawn
                 target = self.board[new_y][i]
                 if target is not None and target.color == self.enemy_color:
                     print(f"Enemy found at: ({i}, {new_y})")
@@ -1155,31 +1155,42 @@ class Game:
 
                                     for d in range(1, abs(dif_y)):
                                         self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i - d * step_x + 0.5), SQUARE_SIZE * (j - d * step_y+ 0.5)), self.group_sprites))
-                                        target_y = y+d*step_y 
-                                        target_x = x+d*step_x 
-                                        if 0 <= target_x < 8 and 0 <= target_y < 8:
-                                            target = self.board[target_y][target_x]
-                                            if target is not None and king.color == "white":
-                                                self.cant_move_king_can_be_checked_white_x_bishop.append(target_x)
-                                                self.cant_move_king_can_be_checked_white_y_bishop.append(target_y)
-                                            if target is not None and king.color == "black":
-                                                self.cant_move_king_can_be_checked_black_x_bishop.append(target_x)
-                                                self.cant_move_king_can_be_checked_black_y_bishop.append(target_y)
+                                        if 0 <= x+d*step_x  < 8 and 0 <= y+d*step_y < 8:
+                                            target = self.board[y+d*step_y][x+d*step_x]
+                                            if king.color == "white":
+                                                if target is not None and target.color == "white":
+                                                    self.cant_move_king_can_be_checked_white_x_bishop.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_white_y_bishop.append(y+d*step_y)
+                                                    break
+                                                elif target is None:
+                                                    self.cant_move_king_can_be_checked_white_x_bishop.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_white_y_bishop.append(y+d*step_y)
+                                            if king.color == "black":
+                                                if target is not None and target.color == "black":
+                                                    self.cant_move_king_can_be_checked_black_x_bishop.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_black_y_bishop.append(y+d*step_y)
+                                                elif target is None:
+                                                    self.cant_move_king_can_be_checked_black_x_bishop.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_black_y_bishop.append(y+d*step_y)
 
                     # Rook
                     for y in range(8):
                         if self.board[y][i] is not None and self.board[y][i].piece_name in ["queen.png", "rook.png"] and self.board[y][i].color == self.enemy_color:
                                if self.enemy_color == "white":
                                    self.cant_move_king_can_be_checked_black_x.append(i)
+                                   self.cant_move_king_can_be_checked_black_y.append(y)
                                elif self.enemy_color == "black":
                                    self.cant_move_king_can_be_checked_white_x.append(i)
+                                   self.cant_move_king_can_be_checked_white_y.append(y)
                                    
                     for x in range(8):
                         if self.board[j][x] is not None and self.board[j][x].piece_name in ["queen.png", "rook.png"] and self.board[j][x].color == self.enemy_color:
                                if self.enemy_color == "white":
                                    self.cant_move_king_can_be_checked_black_y.append(j)
+                                   self.cant_move_king_can_be_checked_black_x.append(x)
                                elif self.enemy_color == "black":
                                    self.cant_move_king_can_be_checked_white_y.append(j)
+                                   self.cant_move_king_can_be_checked_white_x.append(x)
 
     def add_pos_check_can_move(self, square_position_x, square_position_y):
         """Adds positions where a piece can protect the king"""
