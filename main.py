@@ -751,7 +751,6 @@ class Game:
         """
         Draw the bish
         """
-        
         # Check from y rect to 8
         # Circle for movement
         bishop_x = self.rect_pos_x
@@ -759,24 +758,28 @@ class Game:
         # Check down with postive x
         bishop_right_x = bishop_x
 
-        condition_protect_x = bishop_right_x not in self.cant_move_king_can_be_checked_black_x if self.board[bishop_y][bishop_right_x].color == "black" else bishop_right_x not in self.cant_move_king_can_be_checked_white_x 
-        condition_protect_y = bishop_y not in self.cant_move_king_can_be_checked_black_y if self.board[bishop_y][bishop_right_x].color == "black" else bishop_y not in self.cant_move_king_can_be_checked_white_y
+        condition_protect_x = bishop_right_x  in self.cant_move_king_can_be_checked_black_x if self.board[bishop_y][bishop_right_x].color == "black" else bishop_right_x  in self.cant_move_king_can_be_checked_white_x 
+        condition_protect_y = bishop_y  in self.cant_move_king_can_be_checked_black_y if self.board[bishop_y][bishop_right_x].color == "black" else bishop_y  in self.cant_move_king_can_be_checked_white_y
+
         # Can kill the bishop or queen if it's near the pawn 
-        condition_protect_x_bishop = bishop_right_x in self.cant_move_king_can_be_checked_black_x_bishop if self.board[bishop_y][bishop_right_x].color == "black" else bishop_right_x in self.cant_move_king_can_be_checked_white_x_bishop 
-        condition_protect_y_bishop = bishop_y  in self.cant_move_king_can_be_checked_black_y_bishop if self.board[bishop_y][bishop_right_x].color == "black" else bishop_y  in self.cant_move_king_can_be_checked_white_y_bishop   
+        #condition_protect_x_bishop = bishop_right_x in self.cant_move_king_can_be_checked_black_x_bishop if self.board[bishop_y][bishop_right_x].color == "black" else bishop_right_x in self.cant_move_king_can_be_checked_white_x_bishop 
+        #condition_protect_y_bishop = bishop_y  in self.cant_move_king_can_be_checked_black_y_bishop if self.board[bishop_y][bishop_right_x].color == "black" else bishop_y  in self.cant_move_king_can_be_checked_white_y_bishop   
 
+        condition_protect = (not (condition_protect_x or condition_protect_y))
 
-        condition_protect = (condition_protect_x and condition_protect_y) or (condition_protect_y_bishop and condition_protect_x_bishop)
 
         for i in range(bishop_y + 1, 8):
             bishop_right_x += 1
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
             if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
                 target = self.board[i][bishop_right_x] # Position where we are moving
+                # Check enemy's bishop can check the king
+                condition_protect_bishop = (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop)
+
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
                     break  
-                elif condition_to_move and condition_protect:
-                    if target is None:
+                elif condition_to_move and (condition_protect_bishop or condition_protect):
+                    if target is None :
                         self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                     elif target is not None and target.color == self.enemy_color:
                         self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
@@ -790,10 +793,13 @@ class Game:
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
             if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
                 target = self.board[i][bishop_right_x]
+                # Check enemy's bishop can check the king
+                condition_protect_bishop = (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop)
+
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
                     break  
-                elif condition_to_move and condition_protect:
-                    if target == None and condition_protect_x or (condition_protect_y_bishop and condition_protect_x_bishop):
+                elif condition_to_move and (condition_protect_bishop or condition_protect):
+                    if target == None:
                         self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                     elif target != None and target.color == self.enemy_color:
                         self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
@@ -805,12 +811,14 @@ class Game:
         for i in range(bishop_y + 1, 8):
             bishop_right_x -= 1
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
-            if 0 <= bishop_right_x < 8 and 0 <= i < 8 : 
-                target = self.board[i][bishop_right_x]
+            if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
+                # Check enemy's bishop can check the king
+                condition_protect_bishop = (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop)
+             
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
                     break  
-                elif condition_to_move and condition_protect:
-                    if target == None and condition_protect_x or (condition_protect_y_bishop and condition_protect_x_bishop):
+                elif condition_to_move and (condition_protect_bishop or condition_protect):
+                    if target == None:
                         self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                     elif target != None and target.color == self.enemy_color:
                         self.circle_enemy.append(CircleEnemy((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
@@ -824,9 +832,11 @@ class Game:
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, bishop_right_x) in self.position_king_checked))
             if 0 <= bishop_right_x < 8 and 0 <= i < 8: 
                 target = self.board[i][bishop_right_x]
+                # Check enemy's bishop can check the king
+                condition_protect_bishop = (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (bishop_right_x, i) in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop)
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
                     break  
-                elif condition_to_move and condition_protect: 
+                elif condition_to_move and (condition_protect_bishop or condition_protect): 
                     if target is None :
                         self.circles.append(Circle((SQUARE_SIZE * (bishop_right_x + 0.5), (SQUARE_SIZE * (i + 0.5))), self.group_sprites))
                     elif target is not None and target.color == self.enemy_color:
@@ -834,8 +844,7 @@ class Game:
                         break # prevent next piece
                     else: break
             
-        # Draw Cirlces for Eneny position
-        
+ 
     def draw_pawn_circle(self):     
         # Protect from bishop if it's near 
         condition_protect = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop)
@@ -867,7 +876,10 @@ class Game:
         # Check from y rect to 8
         for i in range(self.rect_pos_y + 1, 8):
             condition_protect = self.rect_pos_y not in self.cant_move_king_can_be_checked_white_y if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else self.rect_pos_y not in self.cant_move_king_can_be_checked_black_y
-            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and  condition_protect:
+            
+            condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
+            
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and  condition_protect and condition_protect_bishop:
                 target = self.board[i][self.rect_pos_x]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -883,8 +895,11 @@ class Game:
         # Check from y rect to 0
         for i in range(self.rect_pos_y - 1, -1, -1):
             condition_protect = self.rect_pos_y not in self.cant_move_king_can_be_checked_white_y if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else self.rect_pos_y not in self.cant_move_king_can_be_checked_black_y
+
+            condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
+
             print(condition_protect)
-            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and condition_protect: # Or ((self.position_king_checked and self.position_king_checked[0][1] == self.rect_pos_x) 
+            if 0 <= i < 8 and 0 <= self.rect_pos_x < 8 and condition_protect and condition_protect_bishop: # Or ((self.position_king_checked and self.position_king_checked[0][1] == self.rect_pos_x) 
                 target = self.board[i][self.rect_pos_x]# Check if king is not checked
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((i, self.rect_pos_x) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -901,7 +916,10 @@ class Game:
         # Check from x rect to 8
         for j in range(self.rect_pos_x + 1, 8):
             condition_protect = self.rect_pos_x not in self.cant_move_king_can_be_checked_white_x if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else self.rect_pos_x not in self.cant_move_king_can_be_checked_black_x
-            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and ((self.position_king_checked and self.rect_pos_y == self.position_king_checked[0][0]) or condition_protect): # Check if king is not checked 
+            
+            condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
+
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and ((self.position_king_checked and self.rect_pos_y == self.position_king_checked[0][0]) or (condition_protect and condition_protect_bishop)): # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -918,7 +936,10 @@ class Game:
         # Check from x rect to 0
         for j in range(self.rect_pos_x - 1, -1, -1):
             condition_protect = self.rect_pos_x not in self.cant_move_king_can_be_checked_white_x if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else self.rect_pos_x not in self.cant_move_king_can_be_checked_black_x
-            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and ((self.position_king_checked and self.rect_pos_y == self.position_king_checked[0][0]) or condition_protect): # Check if king is not checked 
+
+            condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
+
+            if 0 <= j < 8 and 0 <= self.rect_pos_y < 8 and ((self.position_king_checked and self.rect_pos_y == self.position_king_checked[0][0]) or (condition_protect and condition_protect_bishop)): # Check if king is not checked 
                 target = self.board[self.rect_pos_y][j]
                 condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((self.rect_pos_y, j) in self.position_king_checked))
                 if target is not None and target.color != self.enemy_color: # if there is a piece with the same color
@@ -936,7 +957,10 @@ class Game:
     def _draw_knight_circles_x(self, i, knight_y_pos, knight_x_pos):
         """Draws circles on y"""
         condition_protect = ((knight_x_pos not in self.cant_move_king_can_be_checked_white_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_white_y)) if self.board[knight_y_pos][knight_x_pos].color == "white" else ((knight_x_pos not in self.cant_move_king_can_be_checked_black_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_black_y)) 
-        if  0 <= i < 8 and condition_protect: # Check forward y +
+
+        condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
+
+        if  0 <= i < 8 and condition_protect and condition_protect_bishop: # Check forward y +
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((knight_y_pos + 2, i) in self.position_king_checked))
             # If the king can be checked
             if 0 <= knight_y_pos + 2 < 8 and condition_to_move : 
@@ -947,7 +971,7 @@ class Game:
                     self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 2 + 0.5))), self.group_sprites))
             
             condition_to_move_2 = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((knight_y_pos - 2, i) in self.position_king_checked))
-            if  0 <= knight_y_pos - 2 < 8 and condition_to_move_2:
+            if  0 <= knight_y_pos - 2 < 8 and condition_to_move_2 and condition_protect_bishop:
                 target = self.board[knight_y_pos - 2][i]
                 if target == None:
                     self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 2 + 0.5))), self.group_sprites))
@@ -957,7 +981,10 @@ class Game:
     def _draw_knight_circles_y(self, i, knight_y_pos, knight_x_pos):
         """Draws circles on y"""
         condition_protect = ((knight_x_pos not in self.cant_move_king_can_be_checked_white_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_white_y)) if self.board[knight_y_pos][knight_x_pos].color == "white" else ((knight_x_pos not in self.cant_move_king_can_be_checked_black_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_black_y)) 
-        if 0 <= i < 8 and condition_protect: # check right x +
+
+        condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
+
+        if 0 <= i < 8 and condition_protect and condition_protect_bishop: # check right x +
             condition_to_move = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((knight_y_pos + 1, i) in self.position_king_checked))
             if 0 <= knight_y_pos + 1 < 8 and condition_to_move: 
                 target = self.board[knight_y_pos + 1][i]
@@ -967,7 +994,7 @@ class Game:
                     self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos + 1 + 0.5))), self.group_sprites))
                     
             condition_to_move_2 = ((not self.cant_move_black_pieces and not self.cant_move_white_pieces) or ((knight_y_pos - 1, i) in self.position_king_checked))
-            if 0 <= knight_y_pos - 1 < 8 and condition_to_move_2: 
+            if 0 <= knight_y_pos - 1 < 8 and condition_to_move_2 and condition_protect_bishop: 
                 target = self.board[knight_y_pos - 1][i]
                 if target == None:
                     self.circles.append(Circle((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 1 + 0.5))), self.group_sprites))
