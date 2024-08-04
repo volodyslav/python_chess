@@ -1207,6 +1207,16 @@ class Game:
                     for y in range(8):
                         for x in range(8):
                             if self.board[y][x] is not None and self.board[y][x].piece_name in ["bishop.png", "queen.png"] and self.board[y][x].color == self.enemy_color and king.color != self.enemy_color:
+                                # Add the bishop or queen into the list in order to kill them by enemy bishop or queen
+                                if king.color == "white":
+                                    if self.board[y][x].color != "white":
+                                        self.cant_move_king_can_be_checked_white_x_bishop.append(x)
+                                        self.cant_move_king_can_be_checked_white_y_bishop.append(y)
+                                elif king.color == "black":
+                                    if self.board[y][x].color != "black":
+                                        self.cant_move_king_can_be_checked_black_x_bishop.append(x)
+                                        self.cant_move_king_can_be_checked_black_y_bishop.append(y)
+                                    
                                 dif_y = j - y # Difference between king and bishop
                                 dif_x = i - x
                                 if (dif_y != 0 and dif_x != 0) and (abs(dif_y) == abs(dif_x)): 
