@@ -987,9 +987,9 @@ class Game:
                         break
         # Enemy circles
 
-    def _draw_knight_circles_x(self, i, knight_y_pos, knight_x_pos):
+    def _draw_knight_circles_x(self, i, knight_y_pos):
         """Draws circles on y"""
-        condition_protect = ((knight_x_pos not in self.cant_move_king_can_be_checked_white_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_white_y)) if self.board[knight_y_pos][knight_x_pos].color == "white" else ((knight_x_pos not in self.cant_move_king_can_be_checked_black_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_black_y)) 
+        condition_protect = ((self.rect_pos_x not in self.cant_move_king_can_be_checked_white_x) and (self.rect_pos_y not in self.cant_move_king_can_be_checked_white_y)) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else ((self.rect_pos_x not in self.cant_move_king_can_be_checked_black_x) and (self.rect_pos_y not in self.cant_move_king_can_be_checked_black_y)) 
 
         condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
 
@@ -1011,9 +1011,9 @@ class Game:
                 elif target != None and target.color == self.enemy_color: # Check if we have enemy on new pos
                     self.circle_enemy.append(CircleEnemy((( SQUARE_SIZE * (i + 0.5)), (SQUARE_SIZE * (knight_y_pos - 2 + 0.5))), self.group_sprites))
         
-    def _draw_knight_circles_y(self, i, knight_y_pos, knight_x_pos):
+    def _draw_knight_circles_y(self, i, knight_y_pos):
         """Draws circles on y"""
-        condition_protect = ((knight_x_pos not in self.cant_move_king_can_be_checked_white_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_white_y)) if self.board[knight_y_pos][knight_x_pos].color == "white" else ((knight_x_pos not in self.cant_move_king_can_be_checked_black_x) and (knight_y_pos not in self.cant_move_king_can_be_checked_black_y)) 
+        condition_protect = ((self.rect_pos_x not in self.cant_move_king_can_be_checked_white_x) and (self.rect_pos_y not in self.cant_move_king_can_be_checked_white_y)) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else ((self.rect_pos_x not in self.cant_move_king_can_be_checked_black_x) and (self.rect_pos_y not in self.cant_move_king_can_be_checked_black_y)) 
 
         condition_protect_bishop = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "white" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop)
 
@@ -1040,17 +1040,17 @@ class Game:
         knight_y_pos = self.rect_pos_y 
         
         for i in range(knight_x_pos + 1, knight_x_pos + 2):
-            self._draw_knight_circles_x(i, knight_y_pos, knight_x_pos)
+            self._draw_knight_circles_x(i, knight_y_pos)
 
         for i in range(knight_x_pos + 2, knight_x_pos + 3):
-            self._draw_knight_circles_y(i, knight_y_pos, knight_x_pos)
+            self._draw_knight_circles_y(i, knight_y_pos)
 
         # Check from y rect to x - 1
         for i in range(knight_x_pos - 1, knight_x_pos - 2,  -1): 
-            self._draw_knight_circles_x(i, knight_y_pos, knight_x_pos)
+            self._draw_knight_circles_x(i, knight_y_pos)
 
         for i in range(knight_x_pos - 2, knight_x_pos - 3, -1):
-            self._draw_knight_circles_y(i, knight_y_pos, knight_x_pos)
+            self._draw_knight_circles_y(i, knight_y_pos)
 
     def check_pawn_into_queen(self):         
         # Change pawn when it reaches the top
@@ -1262,7 +1262,7 @@ class Game:
                                 if (dif_x == 0 and dif_y != 0): 
                                     step_y = 1 if dif_y > 0 else -1
                                     for d in range(1, abs(dif_y)):
-                                        self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (x + 0.5), SQUARE_SIZE * (j - d * step_y+ 0.5)), self.group_sprites))
+                                        self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (x + 0.5), SQUARE_SIZE * (y + d * step_y+ 0.5)), self.group_sprites))
                                         if 0 <= y+d*step_y < 8:
                                             target = self.board[y+d*step_y][x]
                                             if king.color == "white":
@@ -1289,29 +1289,29 @@ class Game:
                                 elif (dif_y == 0 and dif_x != 0): 
                                     step_x = 1 if dif_x > 0 else -1
                                     for d in range(1, abs(dif_x)):
-                                        self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i - d * step_x + 0.5), SQUARE_SIZE * (y+ 0.5)), self.group_sprites))
+                                        self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (x + d * step_x + 0.5), SQUARE_SIZE * (y+ 0.5)), self.group_sprites))
                                         if 0 <= x+d*step_x  < 8:
                                             target = self.board[y][x+d*step_x]
                                             if king.color == "white":
                                                 if target is not None and target.color == "white":
-                                                    self.cant_move_king_can_be_checked_white_y.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_white_x.append(x+d*step_x)
                                                     rook_x_count_white += 1
                                                     print(f"Rool count ", rook_x_count_white)
                                                     if rook_x_count_white > 1:
-                                                        self.cant_move_king_can_be_checked_white_y.clear() # Refresh pos if there is two figures
+                                                        self.cant_move_king_can_be_checked_white_x.clear() # Refresh pos if there is two figures
                                                         rook_x_count_white = 0 # Count when we have two before between the rook and rook enemy
                                                     #break
                                                 elif target is None:
-                                                    self.cant_move_king_can_be_checked_white_y.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_white_x.append(x+d*step_x)
                                             if king.color == "black":
                                                 if target is not None and target.color == "black":
-                                                    self.cant_move_king_can_be_checked_black_y.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_black_x.append(x+d*step_x)
                                                     rook_x_count_black += 1
                                                     if rook_x_count_black > 1:
-                                                        self.cant_move_king_can_be_checked_black_y.clear() # Refresh pos if there is two figures
+                                                        self.cant_move_king_can_be_checked_black_x.clear() # Refresh pos if there is two figures
                                                         rook_x_count_black = 0
                                                 elif target is None:
-                                                    self.cant_move_king_can_be_checked_black_y.append(x+d*step_x)
+                                                    self.cant_move_king_can_be_checked_black_x.append(x+d*step_x)
 
     def add_pos_check_can_move(self, square_position_x, square_position_y):
         """Adds positions where a piece can protect the king"""
