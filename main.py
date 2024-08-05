@@ -1193,6 +1193,7 @@ class Game:
         """
         rook_y_count_black, rook_y_count_white = 0, 0 # Count when we have two before between the king and rook enemy 
         rook_x_count_black, rook_x_count_white = 0, 0 # Count when we have two before between the king and rook enemy  
+        bishop_count_black, bishop_count_white = 0, 0 # Count when we have two before between the king and rook enemy  
         for j in range(8):
             for i in range(8):
                 king = self.board[j][i]
@@ -1209,21 +1210,22 @@ class Game:
                     for y in range(8):
                         for x in range(8):
                             if self.board[y][x] is not None and self.board[y][x].piece_name in ["bishop.png", "queen.png"] and self.board[y][x].color == self.enemy_color and king.color != self.enemy_color:
-                                # Add the bishop or queen into the list in order to kill them by enemy bishop or queen
-                                if king.color == "white":
-                                    if self.board[y][x].color != "white":
-                                        self.cant_move_king_can_be_checked_white_x_bishop.append(x)
-                                        self.cant_move_king_can_be_checked_white_y_bishop.append(y)
-                                elif king.color == "black":
-                                    if self.board[y][x].color != "black":
-                                        self.cant_move_king_can_be_checked_black_x_bishop.append(x)
-                                        self.cant_move_king_can_be_checked_black_y_bishop.append(y)
-                                    
+
                                 dif_y = j - y # Difference between king and bishop
                                 dif_x = i - x
                                 if (dif_y != 0 and dif_x != 0) and (abs(dif_y) == abs(dif_x)): 
                                     step_y = 1 if dif_y > 0 else -1
                                     step_x = 1 if dif_x > 0 else -1
+
+                                        # Add the bishop or queen into the list in order to kill them by enemy bishop or queen
+                                    if king.color == "white":
+                                        if self.board[y][x].color != "white":
+                                            self.cant_move_king_can_be_checked_white_x_bishop.append(x)
+                                            self.cant_move_king_can_be_checked_white_y_bishop.append(y)
+                                    elif king.color == "black":
+                                        if self.board[y][x].color != "black":
+                                            self.cant_move_king_can_be_checked_black_x_bishop.append(x)
+                                            self.cant_move_king_can_be_checked_black_y_bishop.append(y)
 
                                     for d in range(1, abs(dif_y)):
                                         self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i - d * step_x + 0.5), SQUARE_SIZE * (j - d * step_y+ 0.5)), self.group_sprites))
@@ -1233,7 +1235,10 @@ class Game:
                                                 if target is not None and target.color == "white":
                                                     self.cant_move_king_can_be_checked_white_x_bishop.append(x+d*step_x)
                                                     self.cant_move_king_can_be_checked_white_y_bishop.append(y+d*step_y)
-                                                    #break
+                                                    bishop_count_white += 1
+                                                    if bishop_count_white > 1:
+                                                        self.cant_move_king_can_be_checked_white_x_bishop.clear()
+                                                        self.cant_move_king_can_be_checked_white_y_bishop.clear()
                                                 elif target is None:
                                                     self.cant_move_king_can_be_checked_white_x_bishop.append(x+d*step_x)
                                                     self.cant_move_king_can_be_checked_white_y_bishop.append(y+d*step_y)
@@ -1241,6 +1246,10 @@ class Game:
                                                 if target is not None and target.color == "black":
                                                     self.cant_move_king_can_be_checked_black_x_bishop.append(x+d*step_x)
                                                     self.cant_move_king_can_be_checked_black_y_bishop.append(y+d*step_y)
+                                                    bishop_count_black += 1
+                                                    if bishop_count_black > 1:
+                                                        self.cant_move_king_can_be_checked_black_x_bishop.clear()
+                                                        self.cant_move_king_can_be_checked_black_y_bishop.clear()
                                                    
                                                 elif target is None:
                                                     self.cant_move_king_can_be_checked_black_x_bishop.append(x+d*step_x)
@@ -1280,7 +1289,7 @@ class Game:
                                 elif (dif_y == 0 and dif_x != 0): 
                                     step_x = 1 if dif_x > 0 else -1
                                     for d in range(1, abs(dif_x)):
-                                        self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i - d * step_y + 0.5), SQUARE_SIZE * (y+ 0.5)), self.group_sprites))
+                                        self.cant_move_king_can_be_checked_circles.append(CircleCheck("blue", 10, (SQUARE_SIZE * (i - d * step_x + 0.5), SQUARE_SIZE * (y+ 0.5)), self.group_sprites))
                                         if 0 <= x+d*step_x  < 8:
                                             target = self.board[y][x+d*step_x]
                                             if king.color == "white":
@@ -1303,7 +1312,6 @@ class Game:
                                                         rook_x_count_black = 0
                                                 elif target is None:
                                                     self.cant_move_king_can_be_checked_black_y.append(x+d*step_x)
-
 
     def add_pos_check_can_move(self, square_position_x, square_position_y):
         """Adds positions where a piece can protect the king"""
