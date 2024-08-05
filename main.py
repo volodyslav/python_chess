@@ -682,6 +682,20 @@ class Game:
         king_color = self.board[king_pos_y][king_pos_x].color
         
         print("King color", king_color)
+
+        # Change postition king and rook
+        if 0 <= king_pos_x < 8 and 0 <= king_pos_y < 8 and self.board[king_pos_y][king_pos_x].first_move == False:
+            for x in range(1, 2): # Move to right if there is a rook
+                if 0 <= king_pos_x + x < 8 and self.board[king_pos_y][king_pos_x + x] is None and self.board[king_pos_y][7].piece_name == "rook.png" and self.board[king_pos_y][7].color == king_color:
+                    self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+                else:
+                    break
+            for x_l in range(1, 2): # Move to left if there is a rook
+                if 0 <= king_pos_x - x_l < 8 and self.board[king_pos_y][king_pos_x - x_l] is None and self.board[king_pos_y][0].piece_name == "rook.png" and self.board[king_pos_y][0].color == king_color:
+                    self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - x_l - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+                else:
+                    break
+
         # Side right and left
         if 0 <= king_pos_x + 1 < 8 : # No circles if thex are blue
             target = self.board[king_pos_y][king_pos_x + 1] 
@@ -877,7 +891,6 @@ class Game:
                             break # prevent next piece
                         else: break
             
- 
     def draw_pawn_circle(self):     
         # Protect from bishop if it's near 
         condition_protect = (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_black_x_bishop, self.cant_move_king_can_be_checked_black_y_bishop) if self.board[self.rect_pos_y][self.rect_pos_x].color == "black" else (self.rect_pos_x, self.rect_pos_y) not in zip(self.cant_move_king_can_be_checked_white_x_bishop, self.cant_move_king_can_be_checked_white_y_bishop)
