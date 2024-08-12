@@ -103,9 +103,10 @@ class Game:
                     self.rect_pos_x = int(self.selected_piece.rect.x // SQUARE_SIZE) # Rect pos x
                     print("Rect pos ", self.rect_pos_y, self.rect_pos_x)
                     print(f"King checked white = {self.check_white_king}, black = {self.check_black_king}")
+                    print(self.board)
                     # Check when king ckecked and the piece with the same color cant move
-                    self.cant_move_black_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x].color == "black" and self.check_black_king) else False
-                    self.cant_move_white_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x].color == "white" and self.check_white_king) else False
+                    self.cant_move_black_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x] is not None and self.board[self.rect_pos_y][self.rect_pos_x].color == "black" and self.check_black_king) else False
+                    self.cant_move_white_pieces = True if (self.board[self.rect_pos_y][self.rect_pos_x] is not None and self.board[self.rect_pos_y][self.rect_pos_x].color == "white" and self.check_white_king) else False
 
                     self.move_direction = 1 if self.piece_color == "black" else -1 # Check the piece's color
 
@@ -684,15 +685,21 @@ class Game:
         print("King color", king_color)
 
         # Change postition king and rook
-        if 0 <= king_pos_x < 8 and 0 <= king_pos_y < 8 and self.board[king_pos_y][king_pos_x].first_move == False:
+        if king_pos_x == 4 and (king_pos_y == 7 or king_pos_y == 0) and self.board[king_pos_y][king_pos_x].first_move == False:
             for x in range(1, 2): # Move to right if there is a rook
                 if 0 <= king_pos_x + x < 8 and self.board[king_pos_y][king_pos_x + x] is None and self.board[king_pos_y][7].piece_name == "rook.png" and self.board[king_pos_y][7].color == king_color:
-                    self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+                    if king_color == "white" and x not in self.cant_move_king_can_be_checked_white_x_bishop and x not in self.cant_move_king_can_be_checked_white_x:
+                        self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+                    elif king_color == "black" and x not in self.bish and x not in self.cant_move_king_can_be_checked_black_x:
+                        self.circles.append(Circle((SQUARE_SIZE * (king_pos_x + x + 1.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
                 else:
                     break
             for x_l in range(1, 2): # Move to left if there is a rook
                 if 0 <= king_pos_x - x_l < 8 and self.board[king_pos_y][king_pos_x - x_l] is None and self.board[king_pos_y][0].piece_name == "rook.png" and self.board[king_pos_y][0].color == king_color:
-                    self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - x_l - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+                    if king_color == "white" and x_l not in self.cant_move_king_can_be_checked_white_x_bishop and x_l not in self.cant_move_king_can_be_checked_white_x:
+                        self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - x_l - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
+                    elif king_color == "black" and x_l not in self.cant_move_king_can_be_checked_black_x_bishop and x_l not in self.cant_move_king_can_be_checked_black_x:
+                        self.circles.append(Circle((SQUARE_SIZE * (king_pos_x - x_l - 0.5), SQUARE_SIZE * (king_pos_y + 0.5)), self.group_sprites))
                 else:
                     break
 
@@ -1090,6 +1097,17 @@ class Game:
             self.circle_y = circle.rect.centery // SQUARE_SIZE
 
             if square_position_x == self.circle_x and square_position_y == self.circle_y and self.board[square_position_y][square_position_x] == None: # If circle == square_position
+                if self.selected_piece.piece_name == "king.png" and self.board[self.rect_pos_y][4] is not None and self.board[self.rect_pos_y][4].piece_name == "king.png":
+                    if square_position_x == 6 and self.board[self.rect_pos_y][7].piece_name == "rook.png" and self.board[self.rect_pos_y][7].color == self.board[self.rect_pos_y][4].color:
+                        self.board[self.rect_pos_y][7].move_piece(5, square_position_y) # Move rook to castling
+                        self.board[self.rect_pos_y][5] = self.board[self.rect_pos_y][7] 
+                        self.board[self.rect_pos_y][7] = None 
+                    if square_position_x == 2 and self.board[self.rect_pos_y][0].piece_name == "rook.png" and self.board[self.rect_pos_y][0].color == self.board[self.rect_pos_y][4].color:
+                        self.board[self.rect_pos_y][0].move_piece(3, square_position_y) # Move rook to castling
+                        self.board[self.rect_pos_y][3] = self.board[self.rect_pos_y][0] 
+                        self.board[self.rect_pos_y][0] = None 
+                        
+
                 self.enemy_color = "white" if self.enemy_color == "black" else "black" # Checks enemy's color
                 self.selected_piece.move_piece(square_position_x, square_position_y)
                 print(f"Move! {self.selected_piece.piece_name}")
